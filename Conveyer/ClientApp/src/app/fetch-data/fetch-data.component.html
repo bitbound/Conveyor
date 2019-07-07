@@ -14,7 +14,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let forecast of forecasts" [class.text-primary]="forecast.temperatureF < 40">
+    <tr *ngFor="let forecast of forecasts">
       <td>{{ forecast.dateFormatted }}</td>
       <td>{{ forecast.temperatureC }}</td>
       <td>{{ forecast.temperatureF }}</td>
