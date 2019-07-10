@@ -5,7 +5,7 @@
         <hr class="my-4">
         <p>Try now by dropping files here, or clicking Upload!</p>
         <p class="lead">
-            <input type="file" #uploadInput hidden />
+            <input type="file" #uploadInput hidden (change)="uploadFiles(uploadInput.files)" />
             <a class="btn btn-primary btn-lg" href="#" role="button" (click)="uploadInput.click()">Upload</a>
         </p>
     </div>
@@ -25,6 +25,9 @@
                 </th>
                 <th>
                     Upload Date
+                </th>
+                <th>
+                    Other Headers
                 </th>
             </tr>
         </thead>    

@@ -11,6 +11,7 @@ using Conveyer.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Conveyer
 {
@@ -39,6 +40,8 @@ namespace Conveyer
             services.AddAuthentication()
                 .AddIdentityServerJwt();
             services.AddMvc(options => options.EnableEndpointRouting = false);
+
+            services.AddScoped<FileExtensionContentTypeProvider>();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

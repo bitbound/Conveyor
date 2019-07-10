@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug with Chrome",
+            "url": "https://localhost:44385/",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "edge",
+            "request": "launch",
+            "name": "Debug with Edge",
+            "url": "https://localhost:44385/",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}

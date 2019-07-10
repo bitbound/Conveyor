@@ -32,6 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="ClientApp\src\lib\yeti.min.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\lib\qr\LICENSE" />
     <None Include="wwwroot\lib\qr\qrcode.js" />
     <None Include="wwwroot\lib\qr\qrcode.min.js" />
