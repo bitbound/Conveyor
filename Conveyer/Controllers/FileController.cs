@@ -1,4 +1,5 @@
 ﻿using Conveyer.Data;
+using Conveyer.DTOs;
 using Conveyer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -61,12 +62,12 @@ namespace Conveyer.Controllers
                 };
                 var fileDescription = new FileDescription()
                 {
-                    FileName = file.Name,
+                    FileName = file.FileName,
                     Content = fileContent,
                     DateUploaded = DateTime.Now,
                     ContentType = file.ContentType,
-                    ContentDisposition = file.ContentDisposition,
-                    Size = file.Length
+                    Size = file.Length,
+                    Guid = Guid.NewGuid().ToString()
                 };
 
                 if (User.Identity.IsAuthenticated)
@@ -75,7 +76,17 @@ namespace Conveyer.Controllers
                     fileDescription.User = user;
                 }
                 await DataService.AddFileDescription(fileDescription);
-                return Ok();
+
+                var dto = new FileDescriptionDTO()
+                {
+                    FileName = fileDescription.FileName,
+                    ContentType = fileDescription.ContentType,
+                    DateUploaded = fileDescription.DateUploaded,
+                    Guid = fileDescription.Guid,
+                    Id = fileDescription.Id,
+                    Size = fileDescription.Size
+                };
+                return Json(dto);
             }
             catch (Exception ex)
             {

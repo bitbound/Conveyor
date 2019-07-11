@@ -1,5 +1,5 @@
 <div *ngIf="!isAuthenticated">
-    <div class="jumbotron">
+    <div class="jumbotron" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
         <h1 class="display-4">File sharing for apps and people.</h1>
         <p class="lead">Transfer files via a secure API, or share files easily in your browser.</p>
         <hr class="my-4">
@@ -12,10 +12,11 @@
 
     <div class="card floating-card">
         <div class="card-body">
-
+            <app-file-table [dataSource]="dataSource"></app-file-table>
         </div>
     </div>
 </div>
+
 <div *ngIf="isAuthenticated">
     <table class="table table-striped table-responsive">
         <thead>

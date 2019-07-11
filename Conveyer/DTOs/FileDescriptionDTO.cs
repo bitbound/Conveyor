@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Conveyer.Models
+namespace Conveyer.DTOs
 {
-    public class FileDescription
+    public class FileDescriptionDTO
     {
-        public FileContent Content { get; set; }
         public string ContentType { get; set; }
         public DateTime DateUploaded { get; set; }
 
@@ -16,9 +14,7 @@ namespace Conveyer.Models
 
         public string Guid { get; set; }
 
-        [Key]
         public int Id { get; set; }
         public long Size { get; set; }
-        public ApplicationUser User { get; set; }
     }
 }
