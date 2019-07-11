@@ -16,6 +16,18 @@ namespace Conveyer.Data
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
+           
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+   
+        }
+
+        public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }
+        public DbSet<FileContent> FileContents { get; set; }
+        public DbSet<FileDescription> FileDescriptions { get; set; }
+        public DbSet<EventLog> EventLogs { get; set; }
     }
 }

@@ -42,6 +42,7 @@ namespace Conveyer
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             services.AddScoped<FileExtensionContentTypeProvider>();
+            services.AddScoped<DataService>();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
