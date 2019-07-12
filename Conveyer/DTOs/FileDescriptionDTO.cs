@@ -7,6 +7,7 @@ namespace Conveyer.DTOs
 {
     public class FileDescriptionDTO
     {
+        public string ContentDisposition { get; set; }
         public string ContentType { get; set; }
         public DateTime DateUploaded { get; set; }
 

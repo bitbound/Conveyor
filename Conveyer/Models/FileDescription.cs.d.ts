@@ -3,6 +3,7 @@
 			content: any[];
 			id: number;
 		};
+		contentDisposition: string;
 		contentType: string;
 		dateUploaded: Date;
 		fileName: string;

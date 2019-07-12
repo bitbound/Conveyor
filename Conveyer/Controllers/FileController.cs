@@ -33,11 +33,10 @@ namespace Conveyer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult> Descriptions()
+        public async Task<IEnumerable<FileDescriptionDTO>> Descriptions()
         {
             var user = await UserManager.GetUserAsync(User);
-            var descriptions = DataService.GetAllDescriptions(user.Id);
-            return Json(descriptions);
+            return DataService.GetAllDescriptions(user.Id).Select(x=> x.ToDto());
         }
 
         [HttpGet("[action]/{guid}")]
@@ -67,6 +66,8 @@ namespace Conveyer.Controllers
             }
 
             Response.ContentType = fileDescription.ContentType;
+            var cd = $"form-data; name=\"file\"; filename=\"{fileDescription.FileName}\"";
+            Response.Headers.TryAdd("Content-Disposition", cd);
 
             return File(fileDescription.Content.Content, fileDescription.ContentType);
         }
@@ -91,10 +92,11 @@ namespace Conveyer.Controllers
                 };
                 var fileDescription = new FileDescription()
                 {
-                    FileName = file.FileName,
+                    FileName = Path.GetFileName(file.FileName),
                     Content = fileContent,
                     DateUploaded = DateTime.Now,
                     ContentType = file.ContentType,
+                    ContentDisposition = file.ContentDisposition,
                     Size = file.Length,
                     Guid = Guid.NewGuid().ToString()
                 };
@@ -106,15 +108,7 @@ namespace Conveyer.Controllers
                 }
                 await DataService.AddFileDescription(fileDescription);
 
-                return new FileDescriptionDTO()
-                {
-                    FileName = Path.GetFileName(fileDescription.FileName),
-                    ContentType = fileDescription.ContentType,
-                    DateUploaded = fileDescription.DateUploaded,
-                    Guid = fileDescription.Guid,
-                    Id = fileDescription.Id,
-                    SizeInKb = Math.Round(fileDescription.Size / (decimal)1024, 2)
-                };
+                return fileDescription.ToDto();
             }
             catch (Exception ex)
             {

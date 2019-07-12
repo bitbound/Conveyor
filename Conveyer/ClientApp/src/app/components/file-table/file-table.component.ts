@@ -29,6 +29,7 @@ export class FileTableComponent implements OnInit {
 
     public downloadFile(fileGuid: string) {
         var url = `api/File/Download/${fileGuid}`;
+        location.href = url;
     }
 
     public viewFile(fileGuid: string) {
@@ -42,11 +43,24 @@ export class FileTableComponent implements OnInit {
 
     public loadFiles() {
         if (this.isAuthenticated) {
-            this.httpClient.get("api/File/Descriptions");
+            this.httpClient.get("api/File/Descriptions").subscribe({
+                next: (result) =>{
+                    this.dataSource = result as Array<FileDescription>;
+                },
+                error: (error) => {
+                    alert("Error retrieving files.");
+                    console.error(error);
+                }
+            })
         }
         else {
-
+            if (localStorage['fileDescriptions']) {
+                this.dataSource = JSON.parse(localStorage['fileDescriptions']);
+            }
         }
+        this.dataSource.forEach(element => {
+            element.dateUploaded = new Date(element.dateUploaded);
+        });
     }
 
 
@@ -69,13 +83,16 @@ export class FileTableComponent implements OnInit {
             this.httpClient.request(request).subscribe(event => {
                 switch (event.type) {
                     case HttpEventType.UploadProgress:
-                        fileUpload.percentLoaded = event.loaded / event.total * 100
+                        fileUpload.percentLoaded = event.loaded / event.total;
                         break;
                     case HttpEventType.Response:
                         if (event.ok) {
                             var fileDesc = event.body as FileDescription;
                             fileDesc.dateUploaded = new Date(fileDesc.dateUploaded);
                             this.dataSource.push(fileDesc);
+                            if (!this.isAuthenticated){
+                                localStorage['fileDescriptions'] = JSON.stringify(this.dataSource);
+                            }
                         }
                         else {
                             alert("There was an error uploading the file.");

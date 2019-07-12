@@ -34,7 +34,7 @@ namespace Conveyer.Data
         {
             return DbContext.FileDescriptions
                     ?.Include(x => x.Content)
-                    ?.Where(x => x.User == null)
+                    ?.Where(x => string.IsNullOrWhiteSpace(x.User.Id))
                     ?.FirstOrDefault(x => x.Guid == fileGuid);
         }
 

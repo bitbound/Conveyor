@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Conveyer.DTOs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Conveyer.Models
     public class FileDescription
     {
         public FileContent Content { get; set; }
+        public string ContentDisposition { get; set; }
         public string ContentType { get; set; }
         public DateTime DateUploaded { get; set; }
 
@@ -20,5 +22,19 @@ namespace Conveyer.Models
         public int Id { get; set; }
         public long Size { get; set; }
         public ApplicationUser User { get; set; }
+
+        public FileDescriptionDTO ToDto()
+        {
+            return new FileDescriptionDTO()
+            {
+                ContentDisposition = ContentDisposition,
+                ContentType = ContentType,
+                DateUploaded = DateUploaded,
+                FileName = FileName,
+                Guid = Guid,
+                Id = Id,
+                SizeInKb = Math.Round(Size / (decimal)1024, 2)
+            };
+        }
     }
 }

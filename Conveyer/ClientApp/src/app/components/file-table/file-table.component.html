@@ -1,11 +1,11 @@
 <div *ngIf="uploads.length > 0">
   <div *ngFor="let fileUpload of uploads" class="row mb-3">
     <div class="col-sm-12">
-      <h2>Uploads</h2>
+      <h2>Active Uploads</h2>
     </div>
     <div class="col-sm-12">
-      <span>{{fileUpload.fileName}}</span>
-      <progress class="progress-bar" role="progressbar" [value]='fileUpload.percentLoaded'></progress>
+      {{fileUpload.fileName}}
+      <progress role="progressbar" [value]='fileUpload.percentLoaded'></progress>
     </div>
   </div>
 
