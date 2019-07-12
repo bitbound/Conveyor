@@ -15,6 +15,6 @@ namespace Conveyer.DTOs
         public string Guid { get; set; }
 
         public int Id { get; set; }
-        public long Size { get; set; }
+        public decimal SizeInKb { get; set; }
     }
 }

@@ -22,6 +22,9 @@ namespace Conveyer.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<FileDescription>()
+                .HasIndex(x => x.Guid);
    
         }
 

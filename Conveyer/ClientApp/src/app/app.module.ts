@@ -13,6 +13,7 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { FileTableComponent } from './components/file-table/file-table.component';
+import { AuthKeysComponent } from './auth-keys/auth-keys.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { FileTableComponent } from './components/file-table/file-table.component
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
+    AuthKeysComponent,
     FileTableComponent
   ],
   imports: [
@@ -30,8 +32,7 @@ import { FileTableComponent } from './components/file-table/file-table.component
     ApiAuthorizationModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
+      { path: 'auth-keys', component: AuthKeysComponent, canActivate: [AuthorizeGuard] },
     ])
   ],
   providers: [

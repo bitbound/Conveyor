@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Conveyer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Conveyer.Data
 {
@@ -19,6 +20,22 @@ namespace Conveyer.Data
         {
             DbContext.FileDescriptions.Add(fileDescription);
             await DbContext.SaveChangesAsync();
+        }
+
+        public FileDescription GetFileDescriptionAndContent(string fileGuid, string userId)
+        {
+            return DbContext.FileDescriptions
+                    ?.Include(x => x.Content)
+                    ?.Where(x => x.User.Id == userId)
+                    ?.FirstOrDefault(x => x.Guid == fileGuid);
+        }
+
+        public FileDescription GetFileDescriptionAndContent(string fileGuid)
+        {
+            return DbContext.FileDescriptions
+                    ?.Include(x => x.Content)
+                    ?.Where(x => x.User == null)
+                    ?.FirstOrDefault(x => x.Guid == fileGuid);
         }
 
         public async Task WriteEvent(EventLog eventLog)
@@ -39,7 +56,6 @@ namespace Conveyer.Data
             });
             await DbContext.SaveChangesAsync();
         }
-
         public async Task WriteEvent(string message)
         {
             DbContext.EventLogs.Add(new EventLog()
@@ -49,6 +65,11 @@ namespace Conveyer.Data
                 TimeStamp = DateTime.Now
             });
             await DbContext.SaveChangesAsync();
+        }
+
+        public List<FileDescription> GetAllDescriptions(string userID)
+        {
+            return DbContext.FileDescriptions.Where(x => x.User.Id == userID).ToList();
         }
     }
 }

@@ -1,6 +1,34 @@
-<table class="table table-responsive table-striped">
+<div *ngIf="uploads.length > 0">
+  <div *ngFor="let fileUpload of uploads" class="row mb-3">
+    <div class="col-sm-12">
+      <h2>Uploads</h2>
+    </div>
+    <div class="col-sm-12">
+      <span>{{fileUpload.fileName}}</span>
+      <progress class="progress-bar" role="progressbar" [value]='fileUpload.percentLoaded'></progress>
+    </div>
+  </div>
+
+</div>
+<table class="table table-striped">
   <thead>
-    <th>Filename</th>
-    <th>Uploaded Date</th>
+    <tr>
+      <th>Filename</th>
+      <th>Date Uploaded</th>
+      <th>Size (KB)</th>
+      <th>Download Link</th>
+      <th>View Link</th>
+      <th>Delete Link</th>
+    </tr>
   </thead>
+  <tbody>
+    <tr *ngFor='let fileDescription of dataSource'>
+      <td>{{fileDescription.fileName}}</td>
+      <td>{{fileDescription.dateUploaded.toLocaleString()}}</td>
+      <td>{{fileDescription.sizeInKb}}</td>
+      <td><a href="#" (click)="downloadFile(fileDescription.guid)">Download</a></td>
+      <td><a href="#" (click)="viewFile(fileDescription.guid)">View</a></td>
+      <td><a href="#" class="text-danger" (click)="deleteFile(fileDescription.guid)">Delete</a></td>
+    </tr>
+  </tbody>
 </table>
