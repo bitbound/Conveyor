@@ -34,7 +34,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome"
     FontAwesomeModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'auth-keys', component: AuthKeysComponent, canActivate: [AuthorizeGuard] },
+      { path: 'auth-keys', component: AuthKeysComponent, canActivate: [AuthorizeGuard] }
     ])
   ],
   providers: [

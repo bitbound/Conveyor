@@ -9,7 +9,7 @@ namespace Conveyer.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }
-        public DbSet<FileDescription> FileDescriptions { get; set; }
+        public List<AuthenticationToken> AuthenticationTokens { get; set; }
+        public List<FileDescription> FileDescriptions { get; set; }
     }
 }

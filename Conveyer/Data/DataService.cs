@@ -22,6 +22,21 @@ namespace Conveyer.Data
             await DbContext.SaveChangesAsync();
         }
 
+        public void DeleteFile(string fileGuid, string userId)
+        {
+            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == userId && x.Guid == fileGuid));
+        }
+
+        public void DeleteFiles(string[] fileGuids, string userId)
+        {
+            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == userId && fileGuids.Contains(x.Guid)));
+        }
+
+        public List<FileDescription> GetAllDescriptions(string userID)
+        {
+            return DbContext.FileDescriptions.Where(x => x.User.Id == userID)?.ToList();
+        }
+
         public FileDescription GetFileDescriptionAndContent(string fileGuid, string userId)
         {
             return DbContext.FileDescriptions
@@ -56,6 +71,7 @@ namespace Conveyer.Data
             });
             await DbContext.SaveChangesAsync();
         }
+
         public async Task WriteEvent(string message)
         {
             DbContext.EventLogs.Add(new EventLog()
@@ -67,9 +83,14 @@ namespace Conveyer.Data
             await DbContext.SaveChangesAsync();
         }
 
-        public List<FileDescription> GetAllDescriptions(string userID)
+        internal void TransferFilesToAccount(string[] fileGuids, string userId)
         {
-            return DbContext.FileDescriptions.Where(x => x.User.Id == userID).ToList();
+            var validFiles = DbContext.FileDescriptions.Where(x => x.User.Id == null && fileGuids.Contains(x.Guid));
+            foreach (var file in validFiles)
+            {
+                file.UserId = userId;
+            }
+            DbContext.SaveChanges();
         }
     }
 }

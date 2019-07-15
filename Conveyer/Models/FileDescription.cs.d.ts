@@ -24,4 +24,5 @@
 				};
 			};
 		};
+		userId: string;
 	}

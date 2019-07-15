@@ -1,3 +1,7 @@
+<h5 class="mb-4" *ngIf="this.isAuthenticated">
+  Welcome, {{userName}}
+</h5>
+
 <div *ngIf="uploads.length > 0">
   <div *ngFor="let fileUpload of uploads" class="row mb-3">
     <div class="col-sm-12">
@@ -9,17 +13,21 @@
     </div>
   </div>
 </div>
-<div>
-  <div class="row">
-    <div class="col-sm-6">
+
+<div style="overflow-x: auto">
+  <div style="display:grid; grid-template-columns: 1fr 1fr">
+    <div>
       <button class="btn btn-danger mb-1" (click)="deleteAllSelectedFiles()">Delete</button>
+      <button class="btn btn-primary mb-1 ml-2" (click)="uploadInput.click()">Upload</button>
     </div>
-    <div class="col-sm-6 text-right">
+
+    <div class="text-right">
       Filter:
       <input #filterInput (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
     </div>
   </div>
-  <table class="table table-striped">
+
+  <table class="table table-striped" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
     <thead>
       <tr>
         <th><input #selectAllCheckbox type="checkbox" (change)="toggleSelectAll(selectAllCheckbox.checked)" /></th>
@@ -41,8 +49,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor='let fileDescription of filteredData'>
-        <td><input type="checkbox" [checked]="fileDescription.isSelected" /></td>
+      <tr *ngFor='let fileDescription of filteredData;'>
+        <td>
+          <input #fileSelectCheckbox type="checkbox" [checked]="fileDescription.isSelected" 
+                (change)="toggleFileSelected(fileDescription.guid, fileSelectCheckbox.checked)" />
+        </td>
         <td>{{fileDescription.fileName}}</td>
         <td>{{fileDescription.dateUploaded.toLocaleString()}}</td>
         <td>{{fileDescription.sizeInKb}}</td>
@@ -52,4 +63,5 @@
       </tr>
     </tbody>
   </table>
+  <input type="file" #uploadInput hidden (change)="onUploadInputChanged(uploadInput)" />
 </div>

@@ -23,6 +23,8 @@ namespace Conveyer.Models
         public long Size { get; set; }
         public ApplicationUser User { get; set; }
 
+        public string UserId { get; set; }
+
         public FileDescriptionDTO ToDto()
         {
             return new FileDescriptionDTO()

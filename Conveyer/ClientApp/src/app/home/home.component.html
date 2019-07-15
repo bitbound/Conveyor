@@ -11,12 +11,14 @@
   </div>
 </div>
 
+<div class="mt-3" *ngIf="!isAuthenticated">
+  <p class="text-info">
+    Tip: Sign in to save your files across devices.
+  </p>
+</div>
+
 <div class="card floating-card">
   <div class="card-body">
       <app-file-table #fileTable></app-file-table>
   </div>
-</div>
-
-<div *ngIf="isAuthenticated">
-
 </div>

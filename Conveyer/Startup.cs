@@ -31,14 +31,25 @@ namespace Conveyer
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.ClaimsIdentity.UserIdClaimType = "UserID";
+            })
+            .AddDefaultUI()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //services.AddDefaultIdentity<ApplicationUser>(options =>
+            //{
+            //    options.ClaimsIdentity.UserIdClaimType = "UserID";
+            //})
+            //.AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             services.AddScoped<FileExtensionContentTypeProvider>();

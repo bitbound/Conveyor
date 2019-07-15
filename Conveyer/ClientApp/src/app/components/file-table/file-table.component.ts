@@ -14,15 +14,12 @@ import { faSortAmountUp, faSortAmountDown, IconDefinition, faSortAmountDownAlt }
 export class FileTableComponent implements OnInit {
     constructor(client: HttpClient, auth: AuthorizeService) {
         this.httpClient = client;
-        auth.isAuthenticated().subscribe({
-            next: (result) => {
-                this.isAuthenticated = result;
-            }
-        });
+        this.authService = auth;
     }
 
+    private authService: AuthorizeService;
     private httpClient: HttpClient;
-    
+
     public currentFilter: string = "";
     public currentSortIcon: IconDefinition;
     public currentSortColumn: ColumnType = ColumnType.fileName;
@@ -32,11 +29,12 @@ export class FileTableComponent implements OnInit {
     public filteredData: Array<FileDescription> = new Array<FileDescription>();
     public isAuthenticated: boolean;
     public uploads: Array<FileUpload> = new Array<FileUpload>();
+    public userName: string;
 
-    public applyFilter(filter:string) {
-        this.filteredData.forEach(x=>x.isSelected = false);
-        this.dataSource.forEach(x=>x.isSelected = false);
-        this.filteredData = this.dataSource.filter(x=>x.fileName.toLowerCase().includes(filter.toLowerCase()));
+    public applyFilter(filter: string) {
+        this.filteredData.forEach(x => x.isSelected = false);
+        this.dataSource.forEach(x => x.isSelected = false);
+        this.filteredData = this.dataSource.filter(x => x.fileName.toLowerCase().includes(filter.toLowerCase()));
     }
 
     public downloadFile(fileGuid: string) {
@@ -49,48 +47,135 @@ export class FileTableComponent implements OnInit {
     }
 
     public deleteAllSelectedFiles() {
-        var selectedFiles = this.filteredData.filter(x => x.isSelected);
-        if (selectedFiles.length == 0) {
+        var selectedGuids = this.filteredData.filter(x => x.isSelected).map(x => x.guid);
+        if (selectedGuids.length == 0) {
             return;
         }
 
-        var result = confirm(`Are you sure you want to delete ${selectedFiles.length} files?`);
+        var result = confirm(`Are you sure you want to delete ${selectedGuids.length} files?`);
 
         if (result) {
-
+            if (this.isAuthenticated) {
+                var url = `api/File/DeleteMany/`;
+                this.httpClient.post(url, selectedGuids).subscribe({
+                    next: () => {
+                        this.removeFilesFromDataSource(selectedGuids);
+                    },
+                    error: (error) => {
+                        alert("Error deleting file.");
+                        console.error(error);
+                    }
+                });
+            }
+            else {
+                this.removeFilesFromDataSource(selectedGuids);
+            }
         }
     }
 
     public deleteFile(fileGuid: string) {
-        var url = `api/File/Delete/${fileGuid}`;
+        var result = confirm("Are you sure you want to delete this file?");
+        if (result) {
+            var dataIndex = this.dataSource.findIndex(x => x.guid == fileGuid);
+            var filteredIndex = this.filteredData.findIndex(x => x.guid == fileGuid);
+
+
+            if (this.isAuthenticated) {
+                var url = `api/File/Delete/${fileGuid}`;
+                this.httpClient.delete(url).subscribe({
+                    next: () => {
+                        this.dataSource.splice(dataIndex, 1);
+                        this.filteredData.splice(filteredIndex, 1);
+                    },
+                    error: (error) => {
+                        alert("Error deleting file.");
+                        console.error(error);
+                    }
+                });
+            }
+            else {
+                this.dataSource.splice(dataIndex, 1);
+                this.filteredData.splice(filteredIndex, 1);
+                localStorage["fileDescriptions"] = JSON.stringify(this.dataSource);
+            }
+        }
     }
 
     public loadFiles() {
         if (this.isAuthenticated) {
-            this.httpClient.get("api/File/Descriptions").subscribe({
+            this.httpClient.get<FileDescription[]>("/api/File/Descriptions").subscribe({
                 next: (result) => {
-                    this.dataSource = result as Array<FileDescription>;
+                    if (result) {
+                        this.dataSource = result;
+                    }
+                    if (localStorage['fileDescriptions']) {
+                        var tempFiles = <FileDescription[]>JSON.parse(localStorage['fileDescriptions']);
+                        if (tempFiles) {
+                            tempFiles.forEach(x=> this.dataSource.push(x));
+                            this.httpClient.post("/api/File/TransferFilesToAccount", tempFiles.map(x=>x.guid));
+                        }
+                    }
+                    this.dataSource.forEach(element => {
+                        element.dateUploaded = new Date(element.dateUploaded);
+                    });
+                    this.filteredData = this.dataSource.slice();
                 },
                 error: (error) => {
                     alert("Error retrieving files.");
                     console.error(error);
                 }
-            })
+            });
         }
         else {
             if (localStorage['fileDescriptions']) {
-                this.dataSource = JSON.parse(localStorage['fileDescriptions']);
+                var tempFiles = <FileDescription[]>JSON.parse(localStorage['fileDescriptions']);
+
+                if (tempFiles){
+                    this.dataSource = tempFiles;
+                    this.dataSource.forEach(element => {
+                        element.dateUploaded = new Date(element.dateUploaded);
+                    });
+                    this.filteredData = this.dataSource.slice();
+                }
             }
         }
-        this.dataSource.forEach(element => {
-            element.dateUploaded = new Date(element.dateUploaded);
-        });
-        this.filteredData = this.dataSource.slice();
     }
 
 
     public ngOnInit(): void {
-        this.loadFiles();
+        this.authService.isAuthenticated().subscribe({
+            next: (result) => {
+                if (typeof this.isAuthenticated == "undefined"){
+                    this.isAuthenticated = result;
+                    if (result) {
+                        this.authService.getUser().subscribe({
+                            next: (user)=>{
+                                this.userName = user.name;
+                            }
+                        });
+                    }
+                    this.loadFiles();
+                }
+            }
+        });
+    }
+
+    public onDragOver(e: DragEvent) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+    }
+
+    public onDrop(e: DragEvent) {
+        e.preventDefault();
+        if (e.dataTransfer.files.length < 1) {
+            return;
+        }
+        this.uploadFiles(e.dataTransfer.files);
+    }
+
+    public onUploadInputChanged(e: HTMLInputElement) {
+        this.uploadFiles(e.files);
+        e.value = null;
     }
 
     public toggleColumnSorting(column: ColumnType) {
@@ -126,10 +211,10 @@ export class FileTableComponent implements OnInit {
                 switch (this.currentSortType) {
                     case SortType.ascending:
                         this.filteredData.sort((a, b) => {
-                            if (a.fileName.toLowerCase() < b.fileName.toLowerCase()){
+                            if (a.fileName.toLowerCase() < b.fileName.toLowerCase()) {
                                 return -1;
                             }
-                            if (a.fileName.toLowerCase() > b.fileName.toLowerCase()){
+                            if (a.fileName.toLowerCase() > b.fileName.toLowerCase()) {
                                 return 1
                             }
                             return 0;
@@ -137,10 +222,10 @@ export class FileTableComponent implements OnInit {
                         break;
                     case SortType.descending:
                         this.filteredData.sort((a, b) => {
-                            if (a.fileName.toLowerCase() > b.fileName.toLowerCase()){
+                            if (a.fileName.toLowerCase() > b.fileName.toLowerCase()) {
                                 return -1;
                             }
-                            if (a.fileName.toLowerCase() < b.fileName.toLowerCase()){
+                            if (a.fileName.toLowerCase() < b.fileName.toLowerCase()) {
                                 return 1
                             }
                             return 0;
@@ -159,10 +244,10 @@ export class FileTableComponent implements OnInit {
                 switch (this.currentSortType) {
                     case SortType.ascending:
                         this.filteredData.sort((a, b) => {
-                            if (a.dateUploaded < b.dateUploaded){
+                            if (a.dateUploaded < b.dateUploaded) {
                                 return -1;
                             }
-                            if (a.dateUploaded > b.dateUploaded){
+                            if (a.dateUploaded > b.dateUploaded) {
                                 return 1;
                             }
                             return 0;
@@ -170,10 +255,10 @@ export class FileTableComponent implements OnInit {
                         break;
                     case SortType.descending:
                         this.filteredData.sort((a, b) => {
-                            if (a.dateUploaded > b.dateUploaded){
+                            if (a.dateUploaded > b.dateUploaded) {
                                 return -1;
                             }
-                            if (a.dateUploaded < b.dateUploaded){
+                            if (a.dateUploaded < b.dateUploaded) {
                                 return 1;
                             }
                             return 0;
@@ -229,6 +314,10 @@ export class FileTableComponent implements OnInit {
         this.currentSortColumn = column;
     }
 
+    public toggleFileSelected(fileGuid:string, isChecked:boolean) {
+        this.filteredData.find(x=>x.guid == fileGuid).isSelected = isChecked;
+    };
+
     public toggleSelectAll(checkAll: boolean) {
         this.filteredData.forEach(x => x.isSelected = checkAll);
     }
@@ -242,7 +331,7 @@ export class FileTableComponent implements OnInit {
 
             var formData = new FormData();
             formData.append("file", files[i]);
-            var request = new HttpRequest("POST", "api/File/Upload", formData, {
+            var request = new HttpRequest("POST", "/api/File/Upload", formData, {
                 reportProgress: true
             });
 
@@ -251,7 +340,7 @@ export class FileTableComponent implements OnInit {
                     case HttpEventType.UploadProgress:
                         var percent = event.loaded / event.total;
                         if (Number.isFinite(percent)) {
-                            fileUpload.percentLoaded = percent;    
+                            fileUpload.percentLoaded = percent;
                         }
                         break;
                     case HttpEventType.Response:
@@ -277,6 +366,19 @@ export class FileTableComponent implements OnInit {
                 alert("There was an error uploading the file.");
                 console.error(error);
             });
+        }
+    }
+
+    private removeFilesFromDataSource(selectedGuids:string[]){
+        selectedGuids.forEach(x => {
+            var dataIndex = this.dataSource.findIndex(y => y.guid == x);
+            var filteredIndex = this.filteredData.findIndex(y => y.guid == x);
+            this.dataSource.splice(dataIndex, 1);
+            this.filteredData.splice(filteredIndex, 1);
+        });
+
+        if (!this.isAuthenticated) {
+            localStorage['fileDescriptions'] = JSON.stringify(this.dataSource);
         }
     }
 }
