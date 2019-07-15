@@ -14,6 +14,7 @@ import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { FileTableComponent } from './components/file-table/file-table.component';
 import { AuthKeysComponent } from './auth-keys/auth-keys.component';
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome"
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { AuthKeysComponent } from './auth-keys/auth-keys.component';
     HttpClientModule,
     FormsModule,
     ApiAuthorizationModule,
+    FontAwesomeModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'auth-keys', component: AuthKeysComponent, canActivate: [AuthorizeGuard] },

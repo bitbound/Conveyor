@@ -4,5 +4,7 @@ export interface FileDescription {
   fileName: string;
   guid: string;
   id: number;
+  isSelected: boolean;
+  isVisible: boolean;
   sizeInKb: number;
 }

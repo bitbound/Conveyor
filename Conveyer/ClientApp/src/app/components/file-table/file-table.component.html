@@ -8,27 +8,48 @@
       <progress role="progressbar" [value]='fileUpload.percentLoaded'></progress>
     </div>
   </div>
-
 </div>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Filename</th>
-      <th>Date Uploaded</th>
-      <th>Size (KB)</th>
-      <th>Download Link</th>
-      <th>View Link</th>
-      <th>Delete Link</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor='let fileDescription of dataSource'>
-      <td>{{fileDescription.fileName}}</td>
-      <td>{{fileDescription.dateUploaded.toLocaleString()}}</td>
-      <td>{{fileDescription.sizeInKb}}</td>
-      <td><a href="#" (click)="downloadFile(fileDescription.guid)">Download</a></td>
-      <td><a href="#" (click)="viewFile(fileDescription.guid)">View</a></td>
-      <td><a href="#" class="text-danger" (click)="deleteFile(fileDescription.guid)">Delete</a></td>
-    </tr>
-  </tbody>
-</table>
+<div>
+  <div class="row">
+    <div class="col-sm-6">
+      <button class="btn btn-danger mb-1" (click)="deleteAllSelectedFiles()">Delete</button>
+    </div>
+    <div class="col-sm-6 text-right">
+      Filter:
+      <input #filterInput (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
+    </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th><input #selectAllCheckbox type="checkbox" (change)="toggleSelectAll(selectAllCheckbox.checked)" /></th>
+        <th class="sortable-header" (click)='toggleColumnSorting(0)'>
+          Filename
+          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 0 && currentSortIcon != null"></fa-icon>
+        </th>
+        <th class="sortable-header" (click)='toggleColumnSorting(1)'>
+          Date Uploaded
+          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 1 && currentSortIcon != null"></fa-icon>
+        </th>
+        <th class="sortable-header" (click)='toggleColumnSorting(2)'>
+          Size (KB)
+          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 2  && currentSortIcon != null"></fa-icon>
+        </th>
+        <th>Download Link</th>
+        <th>View Link</th>
+        <th>Delete Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor='let fileDescription of filteredData'>
+        <td><input type="checkbox" [checked]="fileDescription.isSelected" /></td>
+        <td>{{fileDescription.fileName}}</td>
+        <td>{{fileDescription.dateUploaded.toLocaleString()}}</td>
+        <td>{{fileDescription.sizeInKb}}</td>
+        <td><a href="#" (click)="downloadFile(fileDescription.guid)">Download</a></td>
+        <td><a href="#" (click)="viewFile(fileDescription.guid)">View</a></td>
+        <td><a href="#" class="text-danger" (click)="deleteFile(fileDescription.guid)">Delete</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -30,6 +30,15 @@ namespace Conveyer.Controllers
         private FileExtensionContentTypeProvider FileExtProv { get; }
         private UserManager<ApplicationUser> UserManager { get; }
 
+        [HttpDelete("[action]/{fileGuid}")]
+        public async Task<ActionResult> Delete(string fileGuid)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await UserManager.GetUserAsync(User);
+            }
+            return Ok();
+        }
 
         [Authorize]
         [HttpGet("[action]")]
@@ -39,25 +48,19 @@ namespace Conveyer.Controllers
             return DataService.GetAllDescriptions(user.Id).Select(x=> x.ToDto());
         }
 
-        [HttpGet("[action]/{guid}")]
-        public async Task<ActionResult> Display(string guid)
-        {
-            return null;
-        }
-
-        [HttpGet("[action]/{guid}")]
-        public async Task<ActionResult> Download(string guid)
+        [HttpGet("[action]/{fileGuid}")]
+        public async Task<ActionResult> Display(string fileGuid)
         {
             FileDescription fileDescription;
 
             if (User.Identity.IsAuthenticated)
             {
                 var user = await UserManager.GetUserAsync(User);
-                fileDescription = DataService.GetFileDescriptionAndContent(guid, user.Id);
+                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, user.Id);
             }
             else
             {
-                fileDescription = DataService.GetFileDescriptionAndContent(guid);
+                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid);
             }
 
             if (fileDescription == null)
@@ -65,11 +68,34 @@ namespace Conveyer.Controllers
                 return NotFound();
             }
 
-            Response.ContentType = fileDescription.ContentType;
             var cd = $"form-data; name=\"file\"; filename=\"{fileDescription.FileName}\"";
             Response.Headers.TryAdd("Content-Disposition", cd);
+            return File(fileDescription.Content.Content, "application/octet-stream");
+        }
 
-            return File(fileDescription.Content.Content, fileDescription.ContentType);
+        [HttpGet("[action]/{fileGuid}")]
+        public async Task<ActionResult> Download(string fileGuid)
+        {
+            FileDescription fileDescription;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await UserManager.GetUserAsync(User);
+                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, user.Id);
+            }
+            else
+            {
+                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid);
+            }
+
+            if (fileDescription == null)
+            {
+                return NotFound();
+            }
+
+            var cd = $"form-data; name=\"file\"; filename=\"{fileDescription.FileName}\"";
+            Response.Headers.TryAdd("Content-Disposition", cd);
+            return File(fileDescription.Content.Content, "application/octet-stream");
         }
 
         [RequestSizeLimit(100_000_000)]
