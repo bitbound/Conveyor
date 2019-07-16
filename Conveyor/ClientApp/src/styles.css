@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
+body {
+  padding-bottom: 25px;
+}
 a {
   color: #0366d6;
 }
@@ -51,5 +54,6 @@ code {
 }
 
 .floating-card {
-  box-shadow: 0 5px 15px 5px rgb(225,225,225);
+  /*box-shadow: 0 10px 15px 0 rgb(225,225,225);*/
+  filter: drop-shadow(1px 5px 5px gray);
 }

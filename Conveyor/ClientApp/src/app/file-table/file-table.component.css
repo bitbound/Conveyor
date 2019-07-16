@@ -6,3 +6,31 @@ table {
   cursor: pointer;
   user-select: none;
 }
+
+.file-viewer { 
+  position: fixed;
+  z-index: 2;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  padding: 5px;
+  transform: translate(-50%, -50%) scale(0,0);
+  transition: .5s ease all;
+}
+
+.file-viewer.open {
+  transform: translate(-50%, -50%) scale(1,1);
+  transition: .5s ease all;
+}
+
+.file-view-content {
+  max-height: 80vh;
+  max-width: 80vw;
+  min-height: 50px;
+  min-width: 50px;
+}
+
+.blurred {
+  filter: blur(3px);
+  transition: .5s all;
+}

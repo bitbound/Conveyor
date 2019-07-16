@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<div style="overflow-x: auto">
+<div [style.overflow-x]="'auto'"  [class.blurred]="isFileViewerOpen">
   <div style="display:grid; grid-template-columns: 1fr 1fr">
     <div>
       <button class="btn btn-danger mb-1" (click)="deleteAllSelectedFiles()">Delete</button>
@@ -59,7 +59,7 @@
         <td>
           <a href="/api/File/Download/{{fileDescription.guid}}" target="_blank">Download</a>
           <span *ngIf="fileDescription.contentType.includes('image') || fileDescription.contentType.includes('video')">
-            | <a href="#" (click)="viewFile(fileDescription.guid)">View</a>
+            | <button class="btn btn-link p-0 mb-1" (click)="viewFile(fileDescription.guid)">View</button>
           </span>
         </td>
         <td><a href="#" class="text-danger" (click)="deleteFile(fileDescription.guid)">Delete</a></td>
@@ -69,6 +69,18 @@
   <input type="file" #uploadInput hidden multiple (change)="onUploadInputChanged(uploadInput)" />
 </div>
 
-<div class="file-viewer">
-  
+<div class="file-viewer floating-card" [class.open]="isFileViewerOpen">
+  <div class="mb-2">
+    <button class="btn btn-link p-0 m-0 float-right" (click)="closeFileViewer()" style="color:black">
+        <fa-icon [icon]="closeIcon"></fa-icon>
+    </button>
+    <div class="text-info">
+      File Preview
+    </div>
+  </div>
+  <hr class="my-1" />
+  <div class="text-center">
+    <img class="file-view-content" [src]="fileViewerImageSource" *ngIf="fileViewerImageSource" />
+    <video class="file-view-content" [src]="fileViewerVideoSource" controls *ngIf="fileViewerVideoSource"></video>
+  </div>
 </div>

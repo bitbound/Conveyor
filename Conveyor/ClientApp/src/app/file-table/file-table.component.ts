@@ -3,7 +3,7 @@ import { FileDescription } from "src/app/interfaces/FileDescription";
 import { FileUpload } from "src/app/models/FileUpload";
 import { HttpClient, HttpRequest, HttpEventType } from "@angular/common/http";
 import { AuthorizeService } from "src/api-authorization/authorize.service";
-import { faSortAmountUp, faSortAmountDown, IconDefinition, faSortAmountDownAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSortAmountUp, faSortAmountDown, IconDefinition, faSortAmountDownAlt, faWindowClose } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-file-table',
@@ -17,24 +17,32 @@ export class FileTableComponent implements OnInit {
         this.authService = auth;
     }
 
-    private authService: AuthorizeService;
-    private httpClient: HttpClient;
-
+    public closeIcon: IconDefinition = faWindowClose;
     public currentFilter: string = "";
     public currentSortIcon: IconDefinition;
     public currentSortColumn: ColumnType = ColumnType.fileName;
     public currentSortType: SortType = SortType.none;
 
     public dataSource: Array<FileDescription> = new Array<FileDescription>();
+    public fileViewerImageSource: string;
+    public fileViewerVideoSource: string;
     public filteredData: Array<FileDescription> = new Array<FileDescription>();
     public isAuthenticated: boolean;
+    public isFileViewerOpen:boolean;
     public uploads: Array<FileUpload> = new Array<FileUpload>();
     public userName: string;
+
+    private authService: AuthorizeService;
+    private httpClient: HttpClient;
 
     public applyFilter(filter: string) {
         this.filteredData.forEach(x => x.isSelected = false);
         this.dataSource.forEach(x => x.isSelected = false);
         this.filteredData = this.dataSource.filter(x => x.fileName.toLowerCase().includes(filter.toLowerCase()));
+    }
+
+    public closeFileViewer(){
+        this.isFileViewerOpen = false;
     }
 
     public deleteAllSelectedFiles() {
@@ -370,7 +378,21 @@ export class FileTableComponent implements OnInit {
     }
 
     public viewFile(fileGuid: string) {
+        var fileDesc = this.dataSource.find(x=>x.guid == fileGuid);
+        if (!fileDesc) {
+            return;
+        }
+        this.fileViewerImageSource = null;
+        this.fileViewerVideoSource = null;
         var url = `api/File/Display/${fileGuid}`;
+        if (fileDesc.contentType.includes("image")){
+            this.fileViewerImageSource = url;
+            this.isFileViewerOpen = true;
+        }
+        else if (fileDesc.contentType.includes("video")){
+            this.fileViewerVideoSource = url;
+            this.isFileViewerOpen = true;
+        }
     }
 
     private removeFilesFromDataSource(selectedGuids:string[]){
