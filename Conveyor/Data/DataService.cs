@@ -22,14 +22,16 @@ namespace Conveyor.Data
             await DbContext.SaveChangesAsync();
         }
 
-        public void DeleteFile(string fileGuid, string userId)
+        public async Task DeleteFile(string fileGuid, string userId)
         {
             DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == userId && x.Guid == fileGuid));
+            await DbContext.SaveChangesAsync();
         }
 
-        public void DeleteFiles(string[] fileGuids, string userId)
+        public async Task DeleteFiles(string[] fileGuids, string userId)
         {
             DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == userId && fileGuids.Contains(x.Guid)));
+            await DbContext.SaveChangesAsync();
         }
 
         public List<FileDescription> GetAllDescriptions(string userID)
@@ -51,6 +53,16 @@ namespace Conveyor.Data
                     ?.Include(x => x.Content)
                     ?.Where(x => string.IsNullOrWhiteSpace(x.User.Id))
                     ?.FirstOrDefault(x => x.Guid == fileGuid);
+        }
+
+        public async Task TransferFilesToAccount(string[] fileGuids, string userId)
+        {
+            var validFiles = DbContext.FileDescriptions.Where(x => x.User.Id == null && fileGuids.Contains(x.Guid));
+            foreach (var file in validFiles)
+            {
+                file.UserId = userId;
+            }
+            await DbContext.SaveChangesAsync();
         }
 
         public async Task WriteEvent(EventLog eventLog)
@@ -81,16 +93,6 @@ namespace Conveyor.Data
                 TimeStamp = DateTime.Now
             });
             await DbContext.SaveChangesAsync();
-        }
-
-        internal void TransferFilesToAccount(string[] fileGuids, string userId)
-        {
-            var validFiles = DbContext.FileDescriptions.Where(x => x.User.Id == null && fileGuids.Contains(x.Guid));
-            foreach (var file in validFiles)
-            {
-                file.UserId = userId;
-            }
-            DbContext.SaveChanges();
         }
     }
 }

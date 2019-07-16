@@ -31,24 +31,30 @@ namespace Conveyor
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            //services.AddDefaultIdentity<ApplicationUser>(options =>
             //{
             //    options.ClaimsIdentity.UserIdClaimType = "UserID";
             //})
-            //.AddDefaultUI()
+            //.AddRoles<IdentityRole>()
             //.AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddDefaultIdentity<ApplicationUser>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
+                options.Stores.MaxLengthForKeys = 128;
                 options.ClaimsIdentity.UserIdClaimType = "UserID";
             })
+            .AddDefaultUI()
+            .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
+            services.AddAuthentication(options=> {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddIdentityServerJwt();
 
             services.AddMvc(options => options.EnableEndpointRouting = false);
 

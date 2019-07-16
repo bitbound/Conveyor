@@ -12,7 +12,7 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
 import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
-import { FileTableComponent } from './components/file-table/file-table.component';
+import { FileTableComponent } from './file-table/file-table.component';
 import { AuthKeysComponent } from './auth-keys/auth-keys.component';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome"
 

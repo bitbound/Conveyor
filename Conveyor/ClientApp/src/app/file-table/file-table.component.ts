@@ -37,15 +37,6 @@ export class FileTableComponent implements OnInit {
         this.filteredData = this.dataSource.filter(x => x.fileName.toLowerCase().includes(filter.toLowerCase()));
     }
 
-    public downloadFile(fileGuid: string) {
-        var url = `api/File/Download/${fileGuid}`;
-        location.href = url;
-    }
-
-    public viewFile(fileGuid: string) {
-        var url = `api/File/Display/${fileGuid}`;
-    }
-
     public deleteAllSelectedFiles() {
         var selectedGuids = this.filteredData.filter(x => x.isSelected).map(x => x.guid);
         if (selectedGuids.length == 0) {
@@ -112,8 +103,17 @@ export class FileTableComponent implements OnInit {
                         var tempFiles = <FileDescription[]>JSON.parse(localStorage['fileDescriptions']);
                         if (tempFiles) {
                             tempFiles.forEach(x=> this.dataSource.push(x));
-                            this.httpClient.post("/api/File/TransferFilesToAccount", tempFiles.map(x=>x.guid));
+                            this.httpClient.post("/api/File/TransferFilesToAccount", tempFiles.map(x=>x.guid)).subscribe({
+                                next: result => {
+                                    console.log("Transfer of temp files completed.");
+                                },
+                                error: error => {
+                                    console.error("Transfer of temp files failed.");
+                                    console.error(error);
+                                }
+                            });
                         }
+                        localStorage['fileDescriptions'] = null;
                     }
                     this.dataSource.forEach(element => {
                         element.dateUploaded = new Date(element.dateUploaded);
@@ -367,6 +367,10 @@ export class FileTableComponent implements OnInit {
                 console.error(error);
             });
         }
+    }
+
+    public viewFile(fileGuid: string) {
+        var url = `api/File/Display/${fileGuid}`;
     }
 
     private removeFilesFromDataSource(selectedGuids:string[]){

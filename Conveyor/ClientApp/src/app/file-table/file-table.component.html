@@ -3,10 +3,10 @@
 </h5>
 
 <div *ngIf="uploads.length > 0">
+  <div class="col-sm-12">
+    <h2>Active Uploads</h2>
+  </div>
   <div *ngFor="let fileUpload of uploads" class="row mb-3">
-    <div class="col-sm-12">
-      <h2>Active Uploads</h2>
-    </div>
     <div class="col-sm-12">
       {{fileUpload.fileName}}
       <progress role="progressbar" [value]='fileUpload.percentLoaded'></progress>
@@ -44,24 +44,31 @@
           <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 2  && currentSortIcon != null"></fa-icon>
         </th>
         <th>Download Link</th>
-        <th>View Link</th>
         <th>Delete Link</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor='let fileDescription of filteredData;'>
         <td>
-          <input #fileSelectCheckbox type="checkbox" [checked]="fileDescription.isSelected" 
-                (change)="toggleFileSelected(fileDescription.guid, fileSelectCheckbox.checked)" />
+          <input #fileSelectCheckbox type="checkbox" [checked]="fileDescription.isSelected"
+            (change)="toggleFileSelected(fileDescription.guid, fileSelectCheckbox.checked)" />
         </td>
         <td>{{fileDescription.fileName}}</td>
         <td>{{fileDescription.dateUploaded.toLocaleString()}}</td>
         <td>{{fileDescription.sizeInKb}}</td>
-        <td><a href="#" (click)="downloadFile(fileDescription.guid)">Download</a></td>
-        <td><a href="#" (click)="viewFile(fileDescription.guid)">View</a></td>
+        <td>
+          <a href="/api/File/Download/{{fileDescription.guid}}" target="_blank">Download</a>
+          <span *ngIf="fileDescription.contentType.includes('image') || fileDescription.contentType.includes('video')">
+            | <a href="#" (click)="viewFile(fileDescription.guid)">View</a>
+          </span>
+        </td>
         <td><a href="#" class="text-danger" (click)="deleteFile(fileDescription.guid)">Delete</a></td>
       </tr>
     </tbody>
   </table>
-  <input type="file" #uploadInput hidden (change)="onUploadInputChanged(uploadInput)" />
+  <input type="file" #uploadInput hidden multiple (change)="onUploadInputChanged(uploadInput)" />
+</div>
+
+<div class="file-viewer">
+  
 </div>

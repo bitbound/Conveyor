@@ -1,24 +1,30 @@
-<div *ngIf="!isAuthenticated">
-  <div class="jumbotron" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-    <h1 class="display-4">File sharing for apps and people.</h1>
-    <p class="lead">Transfer files via a secure API, or share files easily in your browser.</p>
-    <hr class="my-4">
-    <p>Try now by dropping files here, or clicking Upload!</p>
-    <p class="lead">
-      <input type="file" #uploadInput hidden (change)="onUploadInputChanged(uploadInput)" />
-      <a class="btn btn-primary btn-lg" href="#" role="button" (click)="uploadInput.click()">Upload</a>
+<div *ngIf="!isLoaded">
+  <div class="signal"></div>
+</div>
+
+<div *ngIf="isLoaded">
+  <div *ngIf="!isAuthenticated">
+    <div class="jumbotron contract-in" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <h1 class="display-4">File sharing for apps and people.</h1>
+      <p class="lead">Transfer files via a secure API, or share files easily in your browser.</p>
+      <hr class="my-4">
+      <p>Try now by dropping files here, or clicking Upload!</p>
+      <p class="lead">
+        <input type="file" #uploadInput hidden multiple (change)="onUploadInputChanged(uploadInput)" />
+        <a class="btn btn-primary btn-lg" href="#" role="button" (click)="uploadInput.click()">Upload</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-3" *ngIf="!isAuthenticated">
+    <p class="text-info">
+      Tip: Sign in to save your files across devices.
     </p>
   </div>
-</div>
 
-<div class="mt-3" *ngIf="!isAuthenticated">
-  <p class="text-info">
-    Tip: Sign in to save your files across devices.
-  </p>
-</div>
-
-<div class="card floating-card">
-  <div class="card-body">
+  <div class="card floating-card">
+    <div class="card-body">
       <app-file-table #fileTable></app-file-table>
+    </div>
   </div>
 </div>

@@ -1,0 +1,15 @@
+.contract-in {
+    animation-name: contract;
+    animation-timing-function: ease;
+    animation-fill-mode: forwards;
+    animation-duration: .75s;
+}
+@keyframes contract {
+    from {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

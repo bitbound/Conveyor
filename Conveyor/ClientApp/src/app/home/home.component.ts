@@ -2,10 +2,11 @@ import { Component, Inject, ViewChild } from '@angular/core';
 import { HttpClient, HttpRequest, HttpEventType, HttpEvent } from '@angular/common/http';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
 import { Observable } from 'rxjs';
-import { FileTableComponent } from '../components/file-table/file-table.component';
+import { FileTableComponent } from '../file-table/file-table.component';
 
 @Component({
   selector: 'app-home',
+  styleUrls: [ "./home.component.css"],
   templateUrl: './home.component.html',
 })
 
@@ -15,6 +16,7 @@ export class HomeComponent {
     auth.isAuthenticated().subscribe({
       next: (result) => {
         this.isAuthenticated = result;
+        this.isLoaded = true;
       }
     });
   }
@@ -22,6 +24,7 @@ export class HomeComponent {
   @ViewChild("fileTable") fileTable: FileTableComponent;
 
   public isAuthenticated: boolean;
+  public isLoaded:boolean;
 
   public onDragOver(e: DragEvent) {
     e.preventDefault();
