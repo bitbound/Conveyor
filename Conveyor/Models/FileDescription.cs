@@ -13,7 +13,7 @@ namespace Conveyor.Models
         public string ContentDisposition { get; set; }
         public string ContentType { get; set; }
         public DateTime DateUploaded { get; set; }
-
+        [StringLength(260)]
         public string FileName { get; set; }
 
         public string Guid { get; set; }

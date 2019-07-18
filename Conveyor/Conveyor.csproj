@@ -32,6 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20190717142925_Rename auth token.cs" />
+    <Compile Remove="Data\Migrations\20190717142925_Rename auth token.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="ClientApp\src\lib\yeti.min.css" />
   </ItemGroup>
 

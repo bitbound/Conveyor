@@ -2,11 +2,6 @@ table {
   min-height: 5rem;
 }
 
-.sortable-header {
-  cursor: pointer;
-  user-select: none;
-}
-
 .file-viewer { 
   position: fixed;
   z-index: 2;

@@ -23,9 +23,12 @@ namespace Conveyor.Data
         {
             base.OnModelCreating(builder);
 
+
             builder.Entity<FileDescription>()
                 .HasIndex(x => x.Guid);
-   
+
+            builder.Entity<AuthenticationToken>()
+                .HasIndex(x => x.Token);
         }
 
         public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }

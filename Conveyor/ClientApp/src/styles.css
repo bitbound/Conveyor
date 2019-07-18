@@ -57,3 +57,8 @@ code {
   /*box-shadow: 0 10px 15px 0 rgb(225,225,225);*/
   filter: drop-shadow(1px 5px 5px gray);
 }
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+}

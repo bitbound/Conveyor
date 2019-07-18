@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
+using Conveyor.Services;
 
 namespace Conveyor
 {
@@ -60,6 +61,7 @@ namespace Conveyor
 
             services.AddScoped<FileExtensionContentTypeProvider>();
             services.AddScoped<DataService>();
+            services.AddScoped<ApplicationConfig>();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

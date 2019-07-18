@@ -3,47 +3,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Conveyor.Models;
+using Conveyor.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols;
 
 namespace Conveyor.Data
 {
     public class DataService
     {
-        public DataService(ApplicationDbContext dbContext)
+        public DataService(ApplicationDbContext dbContext, ApplicationConfig config)
         {
             DbContext = dbContext;
+            AppConfig = config;
         }
 
-        public ApplicationDbContext DbContext { get; }
-
+        private ApplicationConfig AppConfig { get; }
+        private ApplicationDbContext DbContext { get; }
         public async Task AddFileDescription(FileDescription fileDescription)
         {
             DbContext.FileDescriptions.Add(fileDescription);
             await DbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteFile(string fileGuid, string userId)
+        public async Task DeleteFile(string fileGuid, ApplicationUser user)
         {
-            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == userId && x.Guid == fileGuid));
+            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == user.Id && x.Guid == fileGuid));
             await DbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteFiles(string[] fileGuids, string userId)
+        public async Task DeleteFiles(string[] fileGuids, ApplicationUser user)
         {
-            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == userId && fileGuids.Contains(x.Guid)));
+            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == user.Id && fileGuids.Contains(x.Guid)));
             await DbContext.SaveChangesAsync();
         }
 
-        public List<FileDescription> GetAllDescriptions(string userID)
+        public async Task<AuthenticationToken> AddNewToken(ApplicationUser user)
         {
-            return DbContext.FileDescriptions.Where(x => x.User.Id == userID)?.ToList();
+            var newToken = new AuthenticationToken()
+            {
+                DateCreated = DateTime.Now,
+                Description = "New Token",
+                Token = Guid.NewGuid().ToString(),
+                UserId = user.Id
+            };
+            DbContext.AuthenticationTokens.Add(newToken);
+            await DbContext.SaveChangesAsync();
+            return newToken;
         }
 
-        public FileDescription GetFileDescriptionAndContent(string fileGuid, string userId)
+        public async Task UpdateTokenDescription(string tokenGuid, string description, ApplicationUser user)
+        {
+            var targetToken = DbContext.AuthenticationTokens.FirstOrDefault(x => x.UserId == user.Id && x.Token == tokenGuid);
+            if (targetToken != null)
+            {
+                targetToken.Description = description;
+                await DbContext.SaveChangesAsync();
+            }
+        }
+
+        public List<AuthenticationToken> GetAllAuthTokens(ApplicationUser user)
+        {
+            return DbContext.AuthenticationTokens.Where(x => x.User.Id == user.Id)?.ToList();
+        }
+
+        public async Task<List<FileDescription>> GetAllDescriptions(ApplicationUser user)
+        {
+            var expiredDescriptions = DbContext.FileDescriptions.Where(x => x.DateUploaded.AddDays(AppConfig.DataRetentionInDays) < DateTime.Now);
+            if (expiredDescriptions.Any())
+            {
+                DbContext.FileDescriptions.RemoveRange(expiredDescriptions);
+                await DbContext.SaveChangesAsync();
+            }
+            return DbContext.FileDescriptions.Where(x => x.User.Id == user.Id)?.ToList();
+        }
+
+        public FileDescription GetFileDescriptionAndContent(string fileGuid, ApplicationUser user)
         {
             return DbContext.FileDescriptions
                     ?.Include(x => x.Content)
-                    ?.Where(x => x.User.Id == userId)
+                    ?.Where(x => x.User.Id == user.Id)
                     ?.FirstOrDefault(x => x.Guid == fileGuid);
         }
 
@@ -55,12 +94,12 @@ namespace Conveyor.Data
                     ?.FirstOrDefault(x => x.Guid == fileGuid);
         }
 
-        public async Task TransferFilesToAccount(string[] fileGuids, string userId)
+        public async Task TransferFilesToAccount(string[] fileGuids, ApplicationUser user)
         {
             var validFiles = DbContext.FileDescriptions.Where(x => x.User.Id == null && fileGuids.Contains(x.Guid));
             foreach (var file in validFiles)
             {
-                file.UserId = userId;
+                file.UserId = user.Id;
             }
             await DbContext.SaveChangesAsync();
         }

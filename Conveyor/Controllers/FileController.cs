@@ -34,7 +34,7 @@ namespace Conveyor.Controllers
         public async Task<ActionResult> Delete(string fileGuid)
         {
             var user = await UserManager.GetUserAsync(User);
-            await DataService.DeleteFile(fileGuid, user.Id);
+            await DataService.DeleteFile(fileGuid, user);
             return Ok();
         }
 
@@ -42,7 +42,7 @@ namespace Conveyor.Controllers
         public async Task<ActionResult> DeleteMany([FromBody]string[] fileGuids)
         {
             var user = await UserManager.GetUserAsync(User);
-            await DataService.DeleteFiles(fileGuids, user.Id);
+            await DataService.DeleteFiles(fileGuids, user);
             return Ok();
         }
 
@@ -51,7 +51,7 @@ namespace Conveyor.Controllers
         public async Task<IEnumerable<FileDescriptionDTO>> Descriptions()
         {
             var user = await UserManager.GetUserAsync(User);
-            return DataService.GetAllDescriptions(user.Id).Select(x => x.ToDto());    
+            return (await DataService.GetAllDescriptions(user))?.Select(x => x?.ToDto());    
         }
 
         [HttpGet("[action]/{fileGuid}")]
@@ -62,7 +62,7 @@ namespace Conveyor.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var user = await UserManager.GetUserAsync(User);
-                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, user.Id);
+                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, user);
             }
             else
             {
@@ -85,7 +85,7 @@ namespace Conveyor.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var user = await UserManager.GetUserAsync(User);
-                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, user.Id);
+                fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, user);
             }
             else
             {
@@ -106,7 +106,7 @@ namespace Conveyor.Controllers
         public async Task<IActionResult> TransferFilesToAccount([FromBody]string[] fileGuids)
         {
             var user = await UserManager.GetUserAsync(User);
-            await DataService.TransferFilesToAccount(fileGuids, user.Id);
+            await DataService.TransferFilesToAccount(fileGuids, user);
             return Ok();
         }
 

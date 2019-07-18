@@ -13,7 +13,7 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { FileTableComponent } from './file-table/file-table.component';
-import { AuthKeysComponent } from './auth-keys/auth-keys.component';
+import { AuthTokensComponent } from './auth-tokens/auth-tokens.component';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome"
 
 @NgModule({
@@ -23,7 +23,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome"
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    AuthKeysComponent,
+    AuthTokensComponent,
     FileTableComponent
   ],
   imports: [
@@ -34,7 +34,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome"
     FontAwesomeModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'auth-keys', component: AuthKeysComponent, canActivate: [AuthorizeGuard] }
+      { path: 'auth-tokens', component: AuthTokensComponent, canActivate: [AuthorizeGuard] }
     ])
   ],
   providers: [
