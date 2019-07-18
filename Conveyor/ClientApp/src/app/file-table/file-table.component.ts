@@ -23,6 +23,7 @@ export class FileTableComponent implements OnInit {
     public currentSortColumn: ColumnType = ColumnType.fileName;
     public currentSortType: SortType = SortType.none;
 
+    public serverDataRetentionDays: number;
     public dataSource: Array<FileDescription> = new Array<FileDescription>();
     public fileViewerImageSource: string;
     public fileViewerVideoSource: string;
@@ -151,6 +152,17 @@ export class FileTableComponent implements OnInit {
 
 
     public ngOnInit(): void {
+        this.httpClient.get("/api/Config/DataRetention").subscribe({
+            error: err => {
+                console.error(err);
+            },
+            next: result => {
+                var dataRetentionDays = result as number;
+                if (dataRetentionDays && dataRetentionDays > 0) {
+                    this.serverDataRetentionDays = dataRetentionDays;
+                }
+            }
+        })
         this.authService.isAuthenticated().subscribe({
             next: (result) => {
                 if (typeof this.isAuthenticated == "undefined"){

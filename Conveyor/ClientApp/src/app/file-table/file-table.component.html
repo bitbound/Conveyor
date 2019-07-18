@@ -2,6 +2,10 @@
   Welcome, {{userName}}
 </h5>
 
+<div class="text-info mb-3" *ngIf="serverDataRetentionDays">
+  Note: Files expire {{serverDataRetentionDays}} days after being uploaded.
+</div>
+
 <div *ngIf="uploads.length > 0">
   <div class="col-sm-12">
     <h2>Active Uploads</h2>

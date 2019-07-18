@@ -32,16 +32,11 @@ namespace Conveyor
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.AddDefaultIdentity<ApplicationUser>(options =>
-            //{
-            //    options.ClaimsIdentity.UserIdClaimType = "UserID";
-            //})
-            //.AddRoles<IdentityRole>()
-            //.AddEntityFrameworkStores<ApplicationDbContext>();
+            //services.AddDefaultIdentity<ApplicationUser>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                options.Stores.MaxLengthForKeys = 128;
                 options.ClaimsIdentity.UserIdClaimType = "UserID";
             })
             .AddDefaultUI()
@@ -51,11 +46,8 @@ namespace Conveyor
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-            services.AddAuthentication(options=> {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddIdentityServerJwt();
+            services.AddAuthentication()
+                .AddIdentityServerJwt();
 
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
@@ -71,8 +63,10 @@ namespace Conveyor
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dataContext)
         {
+            dataContext.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
