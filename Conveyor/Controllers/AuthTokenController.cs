@@ -33,6 +33,23 @@ namespace Conveyor.Controllers
             return DataService.GetAllAuthTokens(user)?.Select(x => x?.ToDto());
         }
 
+
+        [HttpDelete("[action]/{fileGuid}")]
+        public async Task<ActionResult> Delete(string authToken)
+        {
+            var user = await UserManager.GetUserAsync(User);
+            await DataService.DeleteAuthToken(authToken, user);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> DeleteMany([FromBody]string[] authTokens)
+        {
+            var user = await UserManager.GetUserAsync(User);
+            await DataService.DeleteAuthTokens(authTokens, user);
+            return Ok();
+        }
+
         [HttpGet("[action]")]
         public async Task<AuthTokenDTO> New()
         {
