@@ -72,19 +72,3 @@
   </table>
   <input type="file" #uploadInput hidden multiple (change)="onUploadInputChanged(uploadInput)" />
 </div>
-
-<div class="file-viewer floating-card" [class.open]="isFileViewerOpen">
-  <div class="mb-2">
-    <button class="btn btn-link p-0 m-0 float-right" (click)="closeFileViewer()" style="color:black">
-        <fa-icon [icon]="closeIcon"></fa-icon>
-    </button>
-    <div class="text-info">
-      File Preview
-    </div>
-  </div>
-  <hr class="my-1" />
-  <div class="text-center">
-    <img class="file-view-content" [src]="fileViewerImageSource" *ngIf="fileViewerImageSource" />
-    <video class="file-view-content" [src]="fileViewerVideoSource" controls *ngIf="fileViewerVideoSource"></video>
-  </div>
-</div>

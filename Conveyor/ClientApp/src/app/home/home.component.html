@@ -27,4 +27,20 @@
       <app-file-table #fileTable></app-file-table>
     </div>
   </div>
+
+  <div class="file-viewer floating-card" [class.open]="fileTable.isFileViewerOpen">
+      <div class="mb-2">
+        <button class="btn btn-link p-0 m-0 float-right" (click)="fileTable.closeFileViewer()" style="color:black">
+            <fa-icon [icon]="fileTable.closeIcon"></fa-icon>
+        </button>
+        <div class="text-info">
+          File Preview
+        </div>
+      </div>
+      <hr class="my-1" />
+      <div class="text-center">
+        <img class="file-view-content" [src]="fileTable.fileViewerImageSource" *ngIf="fileTable.fileViewerImageSource" />
+        <video class="file-view-content" [src]="fileTable.fileViewerVideoSource" controls *ngIf="fileTable.fileViewerVideoSource"></video>
+      </div>
+    </div>
 </div>
