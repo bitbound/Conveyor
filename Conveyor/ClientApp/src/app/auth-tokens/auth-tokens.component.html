@@ -57,7 +57,9 @@
         <td>{{authToken.token}}</td>
         <td>{{authToken.dateCreated.toLocaleString()}}</td>
         <td>{{authToken.lastUsed ? authToken.lastUsed.toLocaleString() : ""}}</td>
-        <td><a href="#" class="text-danger" (click)="deleteToken(authToken.token)">Delete</a></td>
+        <td>
+          <button class="btn btn-link text-danger" (click)="deleteToken(authToken.token)">Delete</button>
+        </td>
       </tr>
     </tbody>
   </table>

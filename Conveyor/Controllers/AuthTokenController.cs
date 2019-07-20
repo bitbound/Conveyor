@@ -34,7 +34,7 @@ namespace Conveyor.Controllers
         }
 
 
-        [HttpDelete("[action]/{fileGuid}")]
+        [HttpDelete("[action]/{authToken}")]
         public async Task<ActionResult> Delete(string authToken)
         {
             var user = await UserManager.GetUserAsync(User);
