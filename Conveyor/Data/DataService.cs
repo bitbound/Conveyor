@@ -158,11 +158,20 @@ namespace Conveyor.Data
                     ?.FirstOrDefault(x => x.Guid == fileGuid);
         }
 
-        public FileDescription GetFileDescriptionAndContent(string fileGuid, string authToken)
+        public async Task<FileDescription> GetFileDescriptionAndContent(string fileGuid, string authenticationToken, string ipAddress)
         {
+            var authToken = DbContext.AuthenticationTokens.FirstOrDefault(x => x.Token == authenticationToken);
+            if (authToken == null)
+            {
+                return null;
+            }
+            authToken.LastUsed = DateTime.Now;
+            authToken.LastUsedIp = ipAddress;
+            await DbContext.SaveChangesAsync();
+
             return DbContext.FileDescriptions
                     ?.Include(x => x.Content)
-                    ?.Where(x => x.User.AuthenticationTokens.Any(y => y.Token == authToken))
+                    ?.Where(x => x.User.AuthenticationTokens.Any(y => y.Token == authenticationToken))
                     ?.FirstOrDefault(x => x.Guid == fileGuid);
         }
 

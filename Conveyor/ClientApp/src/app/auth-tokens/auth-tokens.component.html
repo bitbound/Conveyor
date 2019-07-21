@@ -38,6 +38,7 @@
           <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 3  && currentSortIcon != null">
           </fa-icon>
         </th>
+        <th>Last IP</th>
         <th>Delete</th>
       </tr>
     </thead>
@@ -57,6 +58,7 @@
         <td>{{authToken.token}}</td>
         <td>{{authToken.dateCreated.toLocaleString()}}</td>
         <td>{{authToken.lastUsed ? authToken.lastUsed.toLocaleString() : ""}}</td>
+        <td>{{authToken.lastUsedIp}}</td>
         <td>
           <button class="btn btn-link text-danger" (click)="deleteToken(authToken.token)">Delete</button>
         </td>

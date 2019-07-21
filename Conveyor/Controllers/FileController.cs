@@ -102,9 +102,10 @@ namespace Conveyor.Controllers
         }
 
         [HttpGet("[action]/{fileGuid}/{authToken}")]
-        public ActionResult Display(string fileGuid, string authToken)
+        public async Task<ActionResult> Display(string fileGuid, string authToken)
         {
-            var fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, authToken);
+            var ipAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString();
+            var fileDescription = await DataService.GetFileDescriptionAndContent(fileGuid, authToken, ipAddress);
 
             if (fileDescription == null)
             {
@@ -140,9 +141,10 @@ namespace Conveyor.Controllers
         }
 
         [HttpGet("[action]/{fileGuid}/{authToken}")]
-        public ActionResult Download(string fileGuid, string authToken)
+        public async Task<ActionResult> Download(string fileGuid, string authToken)
         {
-            var fileDescription = DataService.GetFileDescriptionAndContent(fileGuid, authToken);
+            var ipAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString();
+            var fileDescription = await DataService.GetFileDescriptionAndContent(fileGuid, authToken, ipAddress);
 
             if (fileDescription == null)
             {
