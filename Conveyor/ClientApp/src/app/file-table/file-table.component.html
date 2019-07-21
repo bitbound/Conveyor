@@ -1,8 +1,8 @@
-<h5 class="mb-2" *ngIf="this.isAuthenticated">
+<h5 class="mb-2" *ngIf="this.isAuthenticated" [class.blurred]="isFileViewerOpen">
   Welcome, {{userName}}
 </h5>
 
-<div class="text-info mb-4" *ngIf="serverDataRetentionDays">
+<div class="text-info mb-4" *ngIf="serverDataRetentionDays" [class.blurred]="isFileViewerOpen">
   Note: Files expire {{serverDataRetentionDays}} days after being uploaded.
 </div>
 
