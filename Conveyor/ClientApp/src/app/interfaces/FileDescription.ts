@@ -1,6 +1,6 @@
 export interface FileDescription {
   contentType: string;
-  dateUploaded: Date;
+  dateUploaded: string;
   fileName: string;
   guid: string;
   id: number;

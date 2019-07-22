@@ -231,7 +231,7 @@ namespace Conveyor.Controllers
             {
                 FileName = Path.GetFileName(file.FileName),
                 Content = fileContent,
-                DateUploaded = DateTime.Now,
+                DateUploaded = DateTime.UtcNow,
                 ContentType = file.ContentType,
                 ContentDisposition = file.ContentDisposition,
                 Size = file.Length,

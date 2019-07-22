@@ -85,9 +85,9 @@ export class AuthTokensComponent implements OnInit {
     this.httpClient.get("/api/AuthToken/New").subscribe({
       next: result => {
         var newToken = result as AuthToken;
-        newToken.dateCreated = new Date(newToken.dateCreated);
+        newToken.dateCreated = new Date(newToken.dateCreated).toLocaleString();
         if (newToken.lastUsed){
-          newToken.lastUsed = new Date(newToken.lastUsed);
+          newToken.lastUsed = new Date(newToken.lastUsed).toLocaleString();
         }
         this.dataSource.push(newToken);
         this.filteredData.push(newToken);
@@ -105,9 +105,9 @@ export class AuthTokensComponent implements OnInit {
         if (result) {
           this.dataSource = result;
           this.dataSource.forEach(token => {
-            token.dateCreated = new Date(token.dateCreated);
+            token.dateCreated = new Date(token.dateCreated).toLocaleString();
             if (token.lastUsed) {
-              token.lastUsed = new Date(token.lastUsed);
+              token.lastUsed = new Date(token.lastUsed).toLocaleString();
             }
           });
           this.filteredData = this.dataSource.slice();
@@ -240,10 +240,13 @@ export class AuthTokensComponent implements OnInit {
         switch (this.currentSortType) {
           case SortType.ascending:
             this.filteredData.sort((a, b) => {
-              if (a.dateCreated < b.dateCreated) {
+              var dateA = new Date(a.dateCreated);
+              var dateB = new Date(b.dateCreated);
+
+              if (dateA < dateB) {
                 return -1;
               }
-              if (a.dateCreated > b.dateCreated) {
+              if (dateA > dateB) {
                 return 1;
               }
               return 0;
@@ -251,10 +254,13 @@ export class AuthTokensComponent implements OnInit {
             break;
           case SortType.descending:
             this.filteredData.sort((a, b) => {
-              if (a.dateCreated > b.dateCreated) {
+              var dateA = new Date(a.dateCreated);
+              var dateB = new Date(b.dateCreated);
+
+              if (dateA > dateB) {
                 return -1;
               }
-              if (a.dateCreated < b.dateCreated) {
+              if (dateA < dateB) {
                 return 1;
               }
               return 0;
@@ -274,10 +280,13 @@ export class AuthTokensComponent implements OnInit {
         switch (this.currentSortType) {
           case SortType.ascending:
             this.filteredData.sort((a, b) => {
-              if (a.lastUsed < b.lastUsed) {
+              var dateA = new Date(a.lastUsed);
+              var dateB = new Date(b.lastUsed);
+
+              if (dateA < dateB) {
                 return -1;
               }
-              if (a.lastUsed > b.lastUsed) {
+              if (dateA > dateB) {
                 return 1;
               }
               return 0;
@@ -285,10 +294,13 @@ export class AuthTokensComponent implements OnInit {
             break;
           case SortType.descending:
             this.filteredData.sort((a, b) => {
-              if (a.lastUsed > b.lastUsed) {
+              var dateA = new Date(a.lastUsed);
+              var dateB = new Date(b.lastUsed);
+
+              if (dateA > dateB) {
                 return -1;
               }
-              if (a.lastUsed < b.lastUsed) {
+              if (dateA < dateB) {
                 return 1;
               }
               return 0;

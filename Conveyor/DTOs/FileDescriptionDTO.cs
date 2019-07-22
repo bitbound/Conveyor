@@ -9,7 +9,7 @@ namespace Conveyor.DTOs
     {
         public string ContentDisposition { get; set; }
         public string ContentType { get; set; }
-        public DateTime DateUploaded { get; set; }
+        public string DateUploaded { get; set; }
 
         public string FileName { get; set; }
 

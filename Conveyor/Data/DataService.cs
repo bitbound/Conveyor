@@ -35,7 +35,7 @@ namespace Conveyor.Data
 
             if (authToken != null)
             {
-                authToken.LastUsed = DateTime.Now;
+                authToken.LastUsed = DateTime.UtcNow;
                 authToken.LastUsedIp = ipAddress;
                 authToken.User.FileDescriptions.Add(fileDescription);
                 await DbContext.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace Conveyor.Data
         {
             var newToken = new AuthenticationToken()
             {
-                DateCreated = DateTime.Now,
+                DateCreated = DateTime.UtcNow,
                 Description = "New Token",
                 Token = Guid.NewGuid().ToString(),
                 UserId = user.Id
@@ -91,7 +91,7 @@ namespace Conveyor.Data
 
             if (authToken != null && fileDescription != null)
             {
-                authToken.LastUsed = DateTime.Now;
+                authToken.LastUsed = DateTime.UtcNow;
                 authToken.LastUsedIp = ipAddress;
 
                 DbContext.FileDescriptions.Remove(fileDescription);
@@ -122,7 +122,7 @@ namespace Conveyor.Data
 
             if (authToken != null && fileDescriptions.Any())
             {
-                authToken.LastUsed = DateTime.Now;
+                authToken.LastUsed = DateTime.UtcNow;
                 authToken.LastUsedIp = ipAddress;
 
                 DbContext.FileDescriptions.RemoveRange(fileDescriptions);
@@ -137,7 +137,7 @@ namespace Conveyor.Data
 
         public async Task<List<FileDescription>> GetAllDescriptions(ApplicationUser user)
         {
-            var expiredDescriptions = DbContext.FileDescriptions.Where(x => x.DateUploaded.AddDays(AppConfig.DataRetentionInDays) < DateTime.Now);
+            var expiredDescriptions = DbContext.FileDescriptions.Where(x => x.DateUploaded.AddDays(AppConfig.DataRetentionInDays) < DateTime.UtcNow);
             if (expiredDescriptions.Any())
             {
                 DbContext.FileDescriptions.RemoveRange(expiredDescriptions);
@@ -149,7 +149,7 @@ namespace Conveyor.Data
         public async Task<List<FileDescription>> GetAllDescriptions(string authenticationToken, string ipAddress)
         {
             var expiredDescriptions = DbContext.FileDescriptions
-                                        .Where(x => x.DateUploaded.AddDays(AppConfig.DataRetentionInDays) < DateTime.Now);
+                                        .Where(x => x.DateUploaded.AddDays(AppConfig.DataRetentionInDays) < DateTime.UtcNow);
 
             if (expiredDescriptions.Any())
             {
@@ -163,7 +163,7 @@ namespace Conveyor.Data
                            .FirstOrDefault(x => x.Token == authenticationToken);
             if (authToken != null)
             {
-                authToken.LastUsed = DateTime.Now;
+                authToken.LastUsed = DateTime.UtcNow;
                 authToken.LastUsedIp = ipAddress;
                 await DbContext.SaveChangesAsync();
                 return authToken.User.FileDescriptions;
@@ -186,7 +186,7 @@ namespace Conveyor.Data
             {
                 return null;
             }
-            authToken.LastUsed = DateTime.Now;
+            authToken.LastUsed = DateTime.UtcNow;
             authToken.LastUsedIp = ipAddress;
             await DbContext.SaveChangesAsync();
 
@@ -238,7 +238,7 @@ namespace Conveyor.Data
                 Message = ex.Message,
                 Source = ex.Source,
                 StackTrace = ex.StackTrace,
-                TimeStamp = DateTime.Now
+                TimeStamp = DateTime.UtcNow
             });
             await DbContext.SaveChangesAsync();
         }
@@ -249,7 +249,7 @@ namespace Conveyor.Data
             {
                 EventType = EventTypes.Info,
                 Message = message,
-                TimeStamp = DateTime.Now
+                TimeStamp = DateTime.UtcNow
             });
             await DbContext.SaveChangesAsync();
         }

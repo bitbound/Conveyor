@@ -27,11 +27,11 @@ namespace Conveyor.Models
         {
             return new AuthTokenDTO()
             {
-                DateCreated = DateCreated,
+                DateCreated = new DateTime(DateCreated.Ticks, DateTimeKind.Utc).ToString("o"),
                 Description = Description,
                 Token = Token,
                 Id = Id,
-                LastUsed = LastUsed,
+                LastUsed = LastUsed.HasValue ? new DateTime(LastUsed.Value.Ticks, DateTimeKind.Utc).ToString("o") : null,
                 LastUsedIp = LastUsedIp
             };
         }

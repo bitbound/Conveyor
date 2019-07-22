@@ -128,7 +128,7 @@ export class FileTableComponent implements OnInit {
                         localStorage['fileDescriptions'] = null;
                     }
                     this.dataSource.forEach(element => {
-                        element.dateUploaded = new Date(element.dateUploaded);
+                        element.dateUploaded = new Date(element.dateUploaded).toLocaleString();
                     });
                     this.filteredData = this.dataSource.slice();
                 },
@@ -145,7 +145,7 @@ export class FileTableComponent implements OnInit {
                 if (tempFiles){
                     this.dataSource = tempFiles;
                     this.dataSource.forEach(element => {
-                        element.dateUploaded = new Date(element.dateUploaded);
+                        element.dateUploaded = new Date(element.dateUploaded).toLocaleString();
                     });
                     this.filteredData = this.dataSource.slice();
                 }
@@ -306,10 +306,12 @@ export class FileTableComponent implements OnInit {
                 switch (this.currentSortType) {
                     case SortType.ascending:
                         this.filteredData.sort((a, b) => {
-                            if (a.dateUploaded < b.dateUploaded) {
+                            var dateA = new Date(a.dateUploaded);
+                            var dateB = new Date(b.dateUploaded);
+                            if (dateA < dateB) {
                                 return -1;
                             }
-                            if (a.dateUploaded > b.dateUploaded) {
+                            if (dateA > dateB) {
                                 return 1;
                             }
                             return 0;
@@ -317,10 +319,13 @@ export class FileTableComponent implements OnInit {
                         break;
                     case SortType.descending:
                         this.filteredData.sort((a, b) => {
-                            if (a.dateUploaded > b.dateUploaded) {
+                            var dateA = new Date(a.dateUploaded);
+                            var dateB = new Date(b.dateUploaded);
+
+                            if (dateA > dateB) {
                                 return -1;
                             }
-                            if (a.dateUploaded < b.dateUploaded) {
+                            if (dateA < dateB) {
                                 return 1;
                             }
                             return 0;
@@ -408,7 +413,7 @@ export class FileTableComponent implements OnInit {
                     case HttpEventType.Response:
                         if (event.ok) {
                             var fileDesc = event.body as FileDescription;
-                            fileDesc.dateUploaded = new Date(fileDesc.dateUploaded);
+                            fileDesc.dateUploaded = new Date(fileDesc.dateUploaded).toLocaleString();
                             this.dataSource.push(fileDesc);
                             this.filteredData.push(fileDesc);
                             if (!this.isAuthenticated) {

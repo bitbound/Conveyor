@@ -31,7 +31,7 @@ namespace Conveyor.Models
             {
                 ContentDisposition = ContentDisposition,
                 ContentType = ContentType,
-                DateUploaded = DateUploaded,
+                DateUploaded = new DateTime(DateUploaded.Ticks, DateTimeKind.Utc).ToString("o"),
                 FileName = FileName,
                 Guid = Guid,
                 Id = Id,

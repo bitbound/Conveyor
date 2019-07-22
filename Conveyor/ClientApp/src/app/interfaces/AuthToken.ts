@@ -1,8 +1,8 @@
 export interface AuthToken {
     description: string;
     token: string;
-    dateCreated: Date;
-    lastUsed: Date;
+    dateCreated: string;
+    lastUsed: string;
     lastUsedIp: string;
     id: number;
     isInEditMode: boolean;

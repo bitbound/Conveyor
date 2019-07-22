@@ -19,22 +19,22 @@
 </div>
 
 <div [style.overflow-x]="'auto'"  [class.blurred]="isFileViewerOpen">
-  <div class="text-right mb-2" *ngIf="isAuthenticated">
+  <div class="text-right m-1 mb-2" *ngIf="isAuthenticated">
     Share Using:
-    <select (change)="sharingTokenChanged($event.target.value)">
+    <select class="form-control" style="display:unset; width:unset" (change)="sharingTokenChanged($event.target.value)">
       <option value="">None</option>
       <option *ngFor="let token of authTokens" [value]="token.token" [title]="token.token">{{token.description}}</option>
     </select>
   </div>
-  <div style="display:grid; grid-template-columns: 1fr 1fr">
+  <div class="m-1" style="display:grid; grid-template-columns: 1fr 1fr">
     <div>
-      <button class="btn btn-danger mb-1" (click)="deleteAllSelectedFiles()">Delete</button>
-      <button class="btn btn-primary mb-1 ml-2" (click)="uploadInput.click()">Upload</button>
+      <button class="btn btn-danger" (click)="deleteAllSelectedFiles()">Delete</button>
+      <button class="btn btn-primary ml-2" (click)="uploadInput.click()">Upload</button>
     </div>
 
     <div class="text-right">
       Filter:
-      <input #filterInput (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
+      <input #filterInput class="form-control" style="display:unset; width:unset" (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
     </div>
   </div>
 
@@ -65,7 +65,7 @@
             (change)="toggleFileSelected(fileDescription.guid, fileSelectCheckbox.checked)" />
         </td>
         <td>{{fileDescription.fileName}}</td>
-        <td>{{fileDescription.dateUploaded.toLocaleString()}}</td>
+        <td>{{fileDescription.dateUploaded}}</td>
         <td>{{fileDescription.sizeInKb}}</td>
         <td>
           <a href="/api/File/Download/{{fileDescription.guid}}" target="_blank">Download</a>

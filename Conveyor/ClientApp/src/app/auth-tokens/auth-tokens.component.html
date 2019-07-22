@@ -7,9 +7,9 @@
       <button class="btn btn-primary mb-1 ml-2" (click)="getNewToken()">New</button>
     </div>
 
-    <div class="text-right">
+    <div class="text-right m-1">
       Filter:
-      <input #filterInput (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
+      <input #filterInput class="form-control" style="display:unset; width:unset" (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
     </div>
   </div>
 
@@ -56,8 +56,8 @@
             (blur)="updateTokenDescription(authToken.token, descriptionInput.value)" />
         </td>
         <td>{{authToken.token}}</td>
-        <td>{{authToken.dateCreated.toLocaleString()}}</td>
-        <td>{{authToken.lastUsed ? authToken.lastUsed.toLocaleString() : ""}}</td>
+        <td>{{authToken.dateCreated}}</td>
+        <td>{{authToken.lastUsed ? authToken.lastUsed : ""}}</td>
         <td>{{authToken.lastUsedIp}}</td>
         <td>
           <button class="btn btn-link p-0 mb-1 text-danger" (click)="deleteToken(authToken.token)">Delete</button>
