@@ -29,6 +29,12 @@ namespace Conveyor.Data
 
             builder.Entity<AuthenticationToken>()
                 .HasIndex(x => x.Token);
+
+            builder.Entity<FileDescription>()
+                .HasOne(x => x.Content)
+                .WithOne(x => x.FileDescription)
+                .HasForeignKey<FileContent>(x => x.FileDescriptionId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }

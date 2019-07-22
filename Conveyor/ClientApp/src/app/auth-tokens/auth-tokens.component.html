@@ -60,7 +60,7 @@
         <td>{{authToken.lastUsed ? authToken.lastUsed.toLocaleString() : ""}}</td>
         <td>{{authToken.lastUsedIp}}</td>
         <td>
-          <button class="btn btn-link text-danger" (click)="deleteToken(authToken.token)">Delete</button>
+          <button class="btn btn-link p-0 mb-1 text-danger" (click)="deleteToken(authToken.token)">Delete</button>
         </td>
       </tr>
     </tbody>

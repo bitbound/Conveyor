@@ -1,6 +1,8 @@
 	interface fileDescription {
 		content: {
 			content: any[];
+			fileDescription: .fileDescription;
+			fileDescriptionId: number;
 			id: number;
 		};
 		contentDisposition: string;

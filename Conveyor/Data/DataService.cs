@@ -70,8 +70,14 @@ namespace Conveyor.Data
 
         public async Task DeleteFile(string fileGuid, ApplicationUser user)
         {
-            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == user.Id && x.Guid == fileGuid));
-            await DbContext.SaveChangesAsync();
+            var fileDescription = DbContext.FileDescriptions
+                                    .FirstOrDefault(x => x.User.Id == user.Id && x.Guid == fileGuid);
+
+            if (fileDescription != null)
+            {
+                DbContext.FileDescriptions.Remove(fileDescription);
+                await DbContext.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteFile(string fileGuid, string authenticationToken, string ipAddress)
@@ -80,19 +86,29 @@ namespace Conveyor.Data
                              .Include(x => x.User)
                              .ThenInclude(x=>x.FileDescriptions)
                              .FirstOrDefault(x => x.Token == authenticationToken);
-            if (authToken != null)
+
+            var fileDescription = authToken.User.FileDescriptions.FirstOrDefault(x => x.Guid == fileGuid);
+
+            if (authToken != null && fileDescription != null)
             {
                 authToken.LastUsed = DateTime.Now;
                 authToken.LastUsedIp = ipAddress;
-                authToken.User.FileDescriptions.RemoveAll(x => x.Guid == fileGuid);
+
+                DbContext.FileDescriptions.Remove(fileDescription);
                 await DbContext.SaveChangesAsync();
             }
         }
 
         public async Task DeleteFiles(string[] fileGuids, ApplicationUser user)
         {
-            DbContext.FileDescriptions.RemoveRange(DbContext.FileDescriptions.Where(x => x.User.Id == user.Id && fileGuids.Contains(x.Guid)));
-            await DbContext.SaveChangesAsync();
+            var fileDescriptions = DbContext.FileDescriptions
+                                    .Where(x => x.User.Id == user.Id && fileGuids.Contains(x.Guid));
+
+            if (fileDescriptions.Any())
+            {
+                DbContext.FileDescriptions.RemoveRange(fileDescriptions);
+                await DbContext.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteFiles(string[] fileGuids, string authenticationToken, string ipAddress)
@@ -102,11 +118,14 @@ namespace Conveyor.Data
                              .ThenInclude(x => x.FileDescriptions)
                              .FirstOrDefault(x => x.Token == authenticationToken);
 
-            if (authToken != null)
+            var fileDescriptions = authToken.User.FileDescriptions.Where(x => fileGuids.Contains(x.Guid));
+
+            if (authToken != null && fileDescriptions.Any())
             {
                 authToken.LastUsed = DateTime.Now;
                 authToken.LastUsedIp = ipAddress;
-                authToken.User.FileDescriptions.RemoveAll(x =>  fileGuids.Contains(x.Guid));
+
+                DbContext.FileDescriptions.RemoveRange(fileDescriptions);
                 await DbContext.SaveChangesAsync();
             }
         }
@@ -129,7 +148,9 @@ namespace Conveyor.Data
 
         public async Task<List<FileDescription>> GetAllDescriptions(string authenticationToken, string ipAddress)
         {
-            var expiredDescriptions = DbContext.FileDescriptions.Where(x => x.DateUploaded.AddDays(AppConfig.DataRetentionInDays) < DateTime.Now);
+            var expiredDescriptions = DbContext.FileDescriptions
+                                        .Where(x => x.DateUploaded.AddDays(AppConfig.DataRetentionInDays) < DateTime.Now);
+
             if (expiredDescriptions.Any())
             {
                 DbContext.FileDescriptions.RemoveRange(expiredDescriptions);
