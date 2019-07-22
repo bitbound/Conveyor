@@ -7,9 +7,7 @@
 </div>
 
 <div *ngIf="uploads.length > 0">
-  <div class="col-sm-12">
-    <h2>Active Uploads</h2>
-  </div>
+  <h2>Active Uploads</h2>
   <div *ngFor="let fileUpload of uploads" class="row mb-3">
     <div class="col-sm-12">
       {{fileUpload.fileName}}
