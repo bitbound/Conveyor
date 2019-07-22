@@ -16,7 +16,7 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th><input #selectAllCheckbox type="checkbox" (change)="toggleSelectAll(selectAllCheckbox.checked)" />
+        <th><input #selectAllCheckbox type="checkbox" class="checkbox-medium" (change)="toggleSelectAll(selectAllCheckbox.checked)" />
         </th>
         <th class="sortable-header" (click)='toggleColumnSorting(0)'>
           Description
@@ -45,7 +45,7 @@
     <tbody>
       <tr *ngFor='let authToken of filteredData;'>
         <td>
-          <input #fileSelectCheckbox type="checkbox" [checked]="authToken.isSelected"
+          <input #fileSelectCheckbox type="checkbox" class="checkbox-medium" [checked]="authToken.isSelected"
             (change)="toggleTokenSelected(authToken.token, fileSelectCheckbox.checked)" />
         </td>
         <td>

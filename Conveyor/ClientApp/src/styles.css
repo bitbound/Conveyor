@@ -61,3 +61,8 @@ code {
   cursor: pointer;
   user-select: none;
 }
+
+.checkbox-medium {
+  height: 1em;
+  width: 1em;
+}

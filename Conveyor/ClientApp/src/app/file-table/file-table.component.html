@@ -19,6 +19,13 @@
 </div>
 
 <div [style.overflow-x]="'auto'"  [class.blurred]="isFileViewerOpen">
+  <div class="text-right mb-2" *ngIf="isAuthenticated">
+    Share Using:
+    <select (change)="sharingTokenChanged($event.target.value)">
+      <option value="">None</option>
+      <option *ngFor="let token of authTokens" [value]="token.token" [title]="token.token">{{token.description}}</option>
+    </select>
+  </div>
   <div style="display:grid; grid-template-columns: 1fr 1fr">
     <div>
       <button class="btn btn-danger mb-1" (click)="deleteAllSelectedFiles()">Delete</button>
@@ -34,7 +41,7 @@
   <table class="table table-striped" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
     <thead>
       <tr>
-        <th><input #selectAllCheckbox type="checkbox" (change)="toggleSelectAll(selectAllCheckbox.checked)" /></th>
+        <th><input #selectAllCheckbox type="checkbox" class="checkbox-medium" (change)="toggleSelectAll(selectAllCheckbox.checked)" /></th>
         <th class="sortable-header" (click)='toggleColumnSorting(0)'>
           Filename
           <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 0 && currentSortIcon != null"></fa-icon>
@@ -47,14 +54,14 @@
           Size (KB)
           <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 2  && currentSortIcon != null"></fa-icon>
         </th>
-        <th>Download Link</th>
+        <th>Access Links</th>
         <th>Delete Link</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor='let fileDescription of filteredData;'>
         <td>
-          <input #fileSelectCheckbox type="checkbox" [checked]="fileDescription.isSelected"
+          <input #fileSelectCheckbox type="checkbox" class="checkbox-medium" [checked]="fileDescription.isSelected"
             (change)="toggleFileSelected(fileDescription.guid, fileSelectCheckbox.checked)" />
         </td>
         <td>{{fileDescription.fileName}}</td>
@@ -62,6 +69,9 @@
         <td>{{fileDescription.sizeInKb}}</td>
         <td>
           <a href="/api/File/Download/{{fileDescription.guid}}" target="_blank">Download</a>
+          <span *ngIf="currentSharingToken">
+            | <button class="btn btn-link p-0 mb-1" (click)="shareLinkClicked(fileDescription.guid)">Share</button>
+          </span>
           <span *ngIf="fileDescription.contentType.includes('image') || fileDescription.contentType.includes('video')">
             | <button class="btn btn-link p-0 mb-1" (click)="viewFile(fileDescription.guid)">View</button>
           </span>

@@ -4,6 +4,7 @@ import { FileUpload } from "src/app/models/FileUpload";
 import { HttpClient, HttpRequest, HttpEventType } from "@angular/common/http";
 import { AuthorizeService } from "src/api-authorization/authorize.service";
 import { faSortAmountUp, faSortAmountDown, IconDefinition, faSortAmountDownAlt, faWindowClose } from '@fortawesome/free-solid-svg-icons';
+import { AuthToken } from "../interfaces/AuthToken";
 
 @Component({
     selector: 'app-file-table',
@@ -17,8 +18,10 @@ export class FileTableComponent implements OnInit {
         this.authService = auth;
     }
 
+    public authTokens: AuthToken[] = new Array<AuthToken>();
     public closeIcon: IconDefinition = faWindowClose;
     public currentFilter: string = "";
+    public currentSharingToken: string;
     public currentSortIcon: IconDefinition;
     public currentSortColumn: ColumnType = ColumnType.fileName;
     public currentSortType: SortType = SortType.none;
@@ -173,7 +176,18 @@ export class FileTableComponent implements OnInit {
                                 this.userName = user.name;
                             }
                         });
-                    }
+                        this.httpClient.get<AuthToken[]>("/api/AuthToken/").subscribe({
+                            next: (result) => {
+                              if (result) {
+                                this.authTokens = result;
+                              }
+                            },
+                            error: (error) => {
+                              alert("Error retrieving auth tokens.");
+                              console.error(error);
+                            }
+                          })
+                    };
                     this.loadFiles();
                 }
             }
@@ -196,6 +210,34 @@ export class FileTableComponent implements OnInit {
     public onUploadInputChanged(e: HTMLInputElement) {
         this.uploadFiles(e.files);
         e.value = null;
+    }
+
+    public shareLinkClicked(fileGuid:string){
+        try {
+            var url = `${location.origin}/api/File/Download/${fileGuid}/${this.currentSharingToken}`;
+            var textArea = document.createElement('textarea');
+            textArea.style.position = 'fixed';
+            textArea.style.left = '0';
+            textArea.style.top = '0';
+            textArea.style.height = '0';
+            textArea.style.width = '0';
+            textArea.style.opacity = '0';
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert("Link copied to clipboard!");
+        }
+        catch (ex) {
+            console.error(ex);
+            alert("Error copying to clipboard.");
+        }
+    }
+
+    public sharingTokenChanged(selectedToken: string) {
+        this.currentSharingToken = selectedToken;
     }
 
     public toggleColumnSorting(column: ColumnType) {
