@@ -1,4 +1,5 @@
 .contract-in {
+    background-color: #d1e2f3 !important;
     animation-name: contract;
     animation-timing-function: ease;
     animation-fill-mode: forwards;
