@@ -47,6 +47,9 @@ export class FileTableComponent implements OnInit {
 
     public closeFileViewer(){
         this.isFileViewerOpen = false;
+        window.setTimeout(()=>{
+            this.fileViewerImageSource = null;
+        }, 500);
     }
 
     public deleteAllSelectedFiles() {
