@@ -36,6 +36,8 @@
     <Compile Remove="Data\Migrations\20190717142925_Rename auth token.Designer.cs" />
     <Compile Remove="Data\Migrations\20190722180822_FileContent relationship.cs" />
     <Compile Remove="Data\Migrations\20190722180822_FileContent relationship.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190723021856_ApplicationUser relationships.cs" />
+    <Compile Remove="Data\Migrations\20190723021856_ApplicationUser relationships.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

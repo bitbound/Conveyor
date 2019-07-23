@@ -35,6 +35,16 @@ namespace Conveyor.Data
                 .WithOne(x => x.FileDescription)
                 .HasForeignKey<FileContent>(x => x.FileDescriptionId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(x => x.FileDescriptions)
+                .WithOne(x => x.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(x => x.AuthenticationTokens)
+                .WithOne(x => x.User)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }
