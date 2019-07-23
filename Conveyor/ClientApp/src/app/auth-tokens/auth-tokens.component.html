@@ -1,68 +1,72 @@
 <div *ngIf="!isLoaded" class="signal"></div>
 
-<div [style.overflow-x]="'auto'" *ngIf="isLoaded">
-  <div style="display:grid; grid-template-columns: 1fr 1fr">
-    <div>
-      <button class="btn btn-danger mb-1" (click)="deleteAllSelectedTokens()">Delete</button>
-      <button class="btn btn-primary mb-1 ml-2" (click)="getNewToken()">New</button>
-    </div>
-
-    <div class="text-right m-1">
-      Filter:
-      <input #filterInput class="form-control" style="display:unset; width:unset" (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
+<div class="card floating-card" *ngIf="isLoaded">
+    <div class="card-body">
+        <div [style.overflow-x]="'auto'">
+            <div style="display:grid; grid-template-columns: 1fr 1fr">
+              <div>
+                <button class="btn btn-danger mb-1" (click)="deleteAllSelectedTokens()">Delete</button>
+                <button class="btn btn-primary mb-1 ml-2" (click)="getNewToken()">New</button>
+              </div>
+          
+              <div class="text-right m-1">
+                Filter:
+                <input #filterInput class="form-control" style="display:unset; width:unset" (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
+              </div>
+            </div>
+          
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th><input #selectAllCheckbox type="checkbox" class="checkbox-medium" (change)="toggleSelectAll(selectAllCheckbox.checked)" />
+                  </th>
+                  <th class="sortable-header" (click)='toggleColumnSorting(0)'>
+                    Description
+                    <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 0 && currentSortIcon != null">
+                    </fa-icon>
+                  </th>
+                  <th class="sortable-header" (click)='toggleColumnSorting(1)'>
+                    Token
+                    <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 1 && currentSortIcon != null">
+                    </fa-icon>
+                  </th>
+                  <th class="sortable-header" (click)='toggleColumnSorting(2)'>
+                    Date Created
+                    <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 2 && currentSortIcon != null">
+                    </fa-icon>
+                  </th>
+                  <th class="sortable-header" (click)='toggleColumnSorting(3)'>
+                    Last Used
+                    <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 3  && currentSortIcon != null">
+                    </fa-icon>
+                  </th>
+                  <th>Last IP</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor='let authToken of filteredData;'>
+                  <td>
+                    <input #fileSelectCheckbox type="checkbox" class="checkbox-medium" [checked]="authToken.isSelected"
+                      (change)="toggleTokenSelected(authToken.token, fileSelectCheckbox.checked)" />
+                  </td>
+                  <td>
+                    <div *ngIf="!authToken.isInEditMode" (click)="toggleEditMode(authToken.token)" [style.cursor]="'pointer'">
+                      {{authToken.description}}
+                    </div>
+                    <input #descriptionInput type="text" [value]="authToken.description" *ngIf="authToken.isInEditMode"
+                      (blur)="updateTokenDescription(authToken.token, descriptionInput.value)" />
+                  </td>
+                  <td>{{authToken.token}}</td>
+                  <td>{{authToken.dateCreated}}</td>
+                  <td>{{authToken.lastUsed ? authToken.lastUsed : ""}}</td>
+                  <td>{{authToken.lastUsedIp}}</td>
+                  <td>
+                    <button class="btn btn-link p-0 mb-1 text-danger" (click)="deleteToken(authToken.token)">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
     </div>
   </div>
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th><input #selectAllCheckbox type="checkbox" class="checkbox-medium" (change)="toggleSelectAll(selectAllCheckbox.checked)" />
-        </th>
-        <th class="sortable-header" (click)='toggleColumnSorting(0)'>
-          Description
-          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 0 && currentSortIcon != null">
-          </fa-icon>
-        </th>
-        <th class="sortable-header" (click)='toggleColumnSorting(1)'>
-          Token
-          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 1 && currentSortIcon != null">
-          </fa-icon>
-        </th>
-        <th class="sortable-header" (click)='toggleColumnSorting(2)'>
-          Date Created
-          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 2 && currentSortIcon != null">
-          </fa-icon>
-        </th>
-        <th class="sortable-header" (click)='toggleColumnSorting(3)'>
-          Last Used
-          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 3  && currentSortIcon != null">
-          </fa-icon>
-        </th>
-        <th>Last IP</th>
-        <th>Delete</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor='let authToken of filteredData;'>
-        <td>
-          <input #fileSelectCheckbox type="checkbox" class="checkbox-medium" [checked]="authToken.isSelected"
-            (change)="toggleTokenSelected(authToken.token, fileSelectCheckbox.checked)" />
-        </td>
-        <td>
-          <div *ngIf="!authToken.isInEditMode" (click)="toggleEditMode(authToken.token)" [style.cursor]="'pointer'">
-            {{authToken.description}}
-          </div>
-          <input #descriptionInput type="text" [value]="authToken.description" *ngIf="authToken.isInEditMode"
-            (blur)="updateTokenDescription(authToken.token, descriptionInput.value)" />
-        </td>
-        <td>{{authToken.token}}</td>
-        <td>{{authToken.dateCreated}}</td>
-        <td>{{authToken.lastUsed ? authToken.lastUsed : ""}}</td>
-        <td>{{authToken.lastUsedIp}}</td>
-        <td>
-          <button class="btn btn-link p-0 mb-1 text-danger" (click)="deleteToken(authToken.token)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
