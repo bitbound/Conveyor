@@ -11,7 +11,7 @@ namespace Conveyor.DTOs
         public string Description { get; set; }
         public string Token { get; set; }
         public int Id { get; set; }
-        public string? LastUsed { get; set; }
+        public string LastUsed { get; set; }
         public string LastUsedIp { get; set; }
     }
 }
