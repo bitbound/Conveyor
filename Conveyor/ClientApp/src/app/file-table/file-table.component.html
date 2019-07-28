@@ -1,82 +1,85 @@
-<h5 class="mb-2" *ngIf="this.isAuthenticated" [class.blurred]="isFileViewerOpen">
-  Welcome, {{userName}}
-</h5>
+<div (dragover)="onDragOver($event)" (drop)="onDrop($event)">
 
-<div class="text-info mb-4" *ngIf="serverDataRetentionDays" [class.blurred]="isFileViewerOpen">
-  Note: Files expire {{serverDataRetentionDays}} days after being uploaded.
-</div>
+  <h5 class="mb-2" *ngIf="this.isAuthenticated" [class.blurred]="isFileViewerOpen">
+    Welcome, {{userName}}
+  </h5>
 
-<div *ngIf="uploads.length > 0">
-  <h2>Active Uploads</h2>
-  <div *ngFor="let fileUpload of uploads" class="row mb-3">
-    <div class="col-sm-12">
-      {{fileUpload.fileName}}
-      <progress role="progressbar" [value]='fileUpload.percentLoaded'></progress>
-    </div>
+  <div class="text-info mb-4" *ngIf="serverDataRetentionDays" [class.blurred]="isFileViewerOpen">
+    Note: Files expire {{serverDataRetentionDays}} days after being uploaded.
   </div>
-</div>
 
-<div [style.overflow-x]="'auto'"  [class.blurred]="isFileViewerOpen">
-  <div class="text-right m-1 mb-2" *ngIf="isAuthenticated">
-    Share Using:
-    <select class="form-control" style="display:unset; width:unset" (change)="sharingTokenChanged($event.target.value)">
-      <option value="">None</option>
-      <option *ngFor="let token of authTokens" [value]="token.token" [title]="token.token">{{token.description}}</option>
-    </select>
-  </div>
-  <div class="m-1" style="display:grid; grid-template-columns: 1fr 1fr">
-    <div>
-      <button class="btn btn-danger" (click)="deleteAllSelectedFiles()">Delete</button>
-      <button class="btn btn-primary ml-2" (click)="uploadInput.click()">Upload</button>
-    </div>
-
-    <div class="text-right">
-      Filter:
-      <input #filterInput class="form-control" style="display:unset; width:unset" (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
+  <div *ngIf="uploads.length > 0">
+    <h2>Active Uploads</h2>
+    <div *ngFor="let fileUpload of uploads" class="row mb-3">
+      <div class="col-sm-12">
+        {{fileUpload.fileName}}
+        <progress role="progressbar" [value]='fileUpload.percentLoaded'></progress>
+      </div>
     </div>
   </div>
 
-  <table class="table table-striped" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-    <thead>
-      <tr>
-        <th><input #selectAllCheckbox type="checkbox" class="checkbox-medium" (change)="toggleSelectAll(selectAllCheckbox.checked)" /></th>
-        <th class="sortable-header" (click)='toggleColumnSorting(0)'>
-          Filename
-          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 0 && currentSortIcon != null"></fa-icon>
-        </th>
-        <th class="sortable-header" (click)='toggleColumnSorting(1)'>
-          Date Uploaded
-          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 1 && currentSortIcon != null"></fa-icon>
-        </th>
-        <th class="sortable-header" (click)='toggleColumnSorting(2)'>
-          Size (KB)
-          <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 2  && currentSortIcon != null"></fa-icon>
-        </th>
-        <th>Access Links</th>
-        <th>Delete Link</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor='let fileDescription of filteredData;'>
-        <td>
-          <input #fileSelectCheckbox type="checkbox" class="checkbox-medium" [checked]="fileDescription.isSelected"
-            (change)="toggleFileSelected(fileDescription.guid, fileSelectCheckbox.checked)" />
-        </td>
-        <td>{{fileDescription.fileName}}</td>
-        <td>{{fileDescription.dateUploaded}}</td>
-        <td>{{fileDescription.sizeInKb}}</td>
-        <td>
-          <a href="/api/File/Download/{{fileDescription.guid}}" target="_blank">Download</a>
-          <span *ngIf="currentSharingToken">
-            | <button class="btn btn-link p-0 mb-1" (click)="shareLinkClicked(fileDescription.guid)">Share</button>
-          </span>
-          <span *ngIf="fileDescription.contentType.includes('image') || fileDescription.contentType.includes('video')">
-            | <button class="btn btn-link p-0 mb-1" (click)="viewFile(fileDescription.guid)">View</button>
-          </span>
-        </td>
-        <td><button class="btn btn-link p-0 mb-1 text-danger" (click)="deleteFile(fileDescription.guid)">Delete</button></td>
-      </tr>
-    </tbody>
-  </table>
-  <input type="file" #uploadInput hidden multiple (change)="onUploadInputChanged(uploadInput)" />
+  <div [style.overflow-x]="'auto'" [class.blurred]="isFileViewerOpen">
+    <div class="text-right m-1 mb-2" *ngIf="isAuthenticated">
+      Share Using:
+      <select class="form-control" style="display:unset; width:unset" (change)="sharingTokenChanged($event.target.value)">
+        <option value="">None</option>
+        <option *ngFor="let token of authTokens" [value]="token.token" [title]="token.token">{{token.description}}</option>
+      </select>
+    </div>
+    <div class="m-1" style="display:grid; grid-template-columns: 1fr 1fr">
+      <div>
+        <button class="btn btn-danger" (click)="deleteAllSelectedFiles()">Delete</button>
+        <button class="btn btn-primary ml-2" (click)="uploadInput.click()">Upload</button>
+      </div>
+
+      <div class="text-right">
+        Filter:
+        <input #filterInput class="form-control" style="display:unset; width:unset" (input)="applyFilter(filterInput.value)" (change)="applyFilter(filterInput.value)" />
+      </div>
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><input #selectAllCheckbox type="checkbox" class="checkbox-medium" (change)="toggleSelectAll(selectAllCheckbox.checked)" /></th>
+          <th class="sortable-header" (click)='toggleColumnSorting(0)'>
+            Filename
+            <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 0 && currentSortIcon != null"></fa-icon>
+          </th>
+          <th class="sortable-header" (click)='toggleColumnSorting(1)'>
+            Date Uploaded
+            <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 1 && currentSortIcon != null"></fa-icon>
+          </th>
+          <th class="sortable-header" (click)='toggleColumnSorting(2)'>
+            Size (KB)
+            <fa-icon [icon]="currentSortIcon" *ngIf="currentSortColumn == 2  && currentSortIcon != null"></fa-icon>
+          </th>
+          <th>Access Links</th>
+          <th>Delete Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor='let fileDescription of filteredData;'>
+          <td>
+            <input #fileSelectCheckbox type="checkbox" class="checkbox-medium" [checked]="fileDescription.isSelected"
+                   (change)="toggleFileSelected(fileDescription.guid, fileSelectCheckbox.checked)" />
+          </td>
+          <td>{{fileDescription.fileName}}</td>
+          <td>{{fileDescription.dateUploaded}}</td>
+          <td>{{fileDescription.sizeInKb}}</td>
+          <td>
+            <a href="/api/File/Download/{{fileDescription.guid}}" target="_blank">Download</a>
+            <span *ngIf="currentSharingToken">
+              | <button class="btn btn-link p-0 mb-1" (click)="shareLinkClicked(fileDescription.guid)">Share</button>
+            </span>
+            <span *ngIf="fileDescription.contentType.includes('image') || fileDescription.contentType.includes('video')">
+              | <button class="btn btn-link p-0 mb-1" (click)="viewFile(fileDescription.guid)">View</button>
+            </span>
+          </td>
+          <td><button class="btn btn-link p-0 mb-1 text-danger" (click)="deleteFile(fileDescription.guid)">Delete</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <input type="file" #uploadInput hidden multiple (change)="onUploadInputChanged(uploadInput)" />
+  </div>
 </div>

@@ -30,7 +30,7 @@ namespace Conveyor.Controllers
         public async Task<IEnumerable<AuthTokenDTO>> Get()
         {
             var user = await UserManager.GetUserAsync(User);
-            return DataService.GetAllAuthTokens(user)?.Select(x => x?.ToDto());
+            return DataService.GetAllAuthTokens(user)?.Select(x => x?.ToDto()).ToList();
         }
 
 

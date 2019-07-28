@@ -68,7 +68,7 @@ namespace Conveyor.Controllers
         public async Task<IEnumerable<FileDescriptionDTO>> Descriptions()
         {
             var user = await UserManager.GetUserAsync(User);
-            return (await DataService.GetAllDescriptions(user))?.Select(x => x?.ToDto());    
+            return (await DataService.GetAllDescriptions(user))?.Select(x => x?.ToDto()).ToList();
         }
 
         [HttpGet("[action]/{authToken}")]
