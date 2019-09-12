@@ -49,17 +49,17 @@ namespace Conveyor
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            services.AddMvc(options => options.EnableEndpointRouting = false);
-
-            services.AddScoped<FileExtensionContentTypeProvider>();
-            services.AddScoped<DataService>();
-            services.AddScoped<ApplicationConfig>();
-
+            services.AddControllersWithViews();
+            services.AddRazorPages();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddScoped<FileExtensionContentTypeProvider>();
+            services.AddScoped<DataService>();
+            services.AddScoped<ApplicationConfig>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,16 +81,22 @@ namespace Conveyor
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
+
+            app.UseRouting();
 
             app.UseAuthentication();
             app.UseIdentityServer();
-
-            app.UseMvc(routes =>
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
 
             app.UseSpa(spa =>
