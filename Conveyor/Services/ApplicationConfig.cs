@@ -14,6 +14,7 @@ namespace Conveyor.Services
         }
         public bool AllowSelfRegistration => bool.Parse(Config["ApplicationOptions:AllowSelfRegistration"]);
         public double DataRetentionInDays => double.Parse(Config["ApplicationOptions:DataRetentionInDays"]);
+        public string DbProvider => Config["ApplicationOptions:DbProvider"];
         private IConfiguration Config { get; set; }
     }
 }
