@@ -21,7 +21,7 @@ export class HomeComponent {
     });
   }
 
-  @ViewChild("fileTable", { static: true}) fileTable: FileTableComponent;
+  @ViewChild("fileTable", { static: false}) fileTable: FileTableComponent;
 
   public isAuthenticated: boolean;
   public isLoaded:boolean;

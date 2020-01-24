@@ -1,4 +1,4 @@
-import { OnInit, Component, Input } from "@angular/core";
+import { OnInit, Component, Input, Directive } from "@angular/core";
 import { FileDescription } from "src/app/interfaces/FileDescription";
 import { FileUpload } from "src/app/models/FileUpload";
 import { HttpClient, HttpRequest, HttpEventType } from "@angular/common/http";
@@ -11,6 +11,7 @@ import { AuthToken } from "../interfaces/AuthToken";
     styleUrls: ['file-table.component.css'],
     templateUrl: 'file-table.component.html',
 })
+
 
 export class FileTableComponent implements OnInit {
     constructor(client: HttpClient, auth: AuthorizeService) {
