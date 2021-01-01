@@ -13,6 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
 using Conveyor.Services;
+using IdentityServer4.Extensions;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using IdentityServer4.Hosting;
+using System.Linq;
 
 namespace Conveyor
 {
@@ -49,11 +53,14 @@ namespace Conveyor
             {
                 options.ClaimsIdentity.UserIdClaimType = "UserID";
             })
-            .AddDefaultUI()
-            .AddDefaultTokenProviders()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddDefaultUI()
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddIdentityServer()
+            services.AddIdentityServer(options =>
+            {
+                options.PublicOrigin = Configuration["PublicOrigin"];
+            })
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
@@ -101,6 +108,7 @@ namespace Conveyor
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
