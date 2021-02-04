@@ -5,17 +5,20 @@ Demo Site: https://conveyor.lucency.co
 
 [![Build Status](https://dev.azure.com/translucency/Conveyor/_apis/build/status/Conveyor?branchName=master)](https://dev.azure.com/translucency/Conveyor/_build/latest?definitionId=16&branchName=master)
 
-
 ## Build Requirements
-* .NET Core 3 Preview 6 SDK
+* .NET 5 SDK
 * Node.js (latest)
 
 ## Hosting Requirements
-* .NET Core 3 Preview 6 Hosting Bundle
-* SQL Server Express
+* .NET 5 Runtime (with Hosting Bundle for hosting in IIS on Windows)
+* SQL Server Express if `DbProvider` is set to SQLServer.
     * You can use either a normal instance or LocalDb.  For LocalDb, the application pool must have "Load user profile" set to true in IIS.
 * You must specify in appsettings.json a certificate to use for signing authentication tokens.  It can be generated through the New-SelfSignedCertifcate cmdlet in PowerShell.
     * See here for more info: https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?view=aspnetcore-3.0#deploy-to-production
+
+
+## Screenshot
+!["Conveyor Screenshot"](https://lucency.co/Images/Screenshots/Conveyor1.jpg)
 
 
 ## Getting Started
